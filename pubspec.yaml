@@ -47,9 +47,10 @@ dependencies:
   chewie: ^1.13.1
 
   firebase_core: ^4.9.0
+  firebase_app_check: ^0.4.4+1
   cloud_firestore: ^6.4.1
-  firebase_auth: ^6.4.0
-  firebase_ai: ^3.13.1
+  firebase_auth: ^6.5.1
+  firebase_ai: ^3.12.1
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
 

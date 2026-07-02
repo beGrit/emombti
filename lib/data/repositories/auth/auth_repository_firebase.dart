@@ -105,7 +105,9 @@ class AuthRepositoryFirebase extends AuthRepository {
       );
 
       // Once signed in, return the UserCredential
-      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
       final user = await _initUser(userCredential.user);
       if (user != null) {
         return Result.ok(user);
@@ -140,9 +142,13 @@ class AuthRepositoryFirebase extends AuthRepository {
       final appleProvider = fb.AppleAuthProvider();
       fb.UserCredential userCredential;
       if (kIsWeb) {
-        userCredential = await fb.FirebaseAuth.instance.signInWithPopup(appleProvider);
+        userCredential = await fb.FirebaseAuth.instance.signInWithPopup(
+          appleProvider,
+        );
       } else {
-        userCredential = await fb.FirebaseAuth.instance.signInWithProvider(appleProvider);
+        userCredential = await fb.FirebaseAuth.instance.signInWithProvider(
+          appleProvider,
+        );
       }
       final user = await _initUser(userCredential.user);
       if (user != null) {
@@ -161,7 +167,12 @@ class AuthRepositoryFirebase extends AuthRepository {
   Future<Result<User>> fetchAuthenticatedUser() async {
     final fbUser = _firebaseAuth.currentUser;
     if (fbUser != null) {
-      final user = await _initUser(fbUser);
+      User? user;
+      try {
+        user = await _initUser(fbUser);
+      } catch (e) {
+        return Result.error(Exception(e.toString()));
+      }
       if (user != null) {
         return Result.ok(user);
       }

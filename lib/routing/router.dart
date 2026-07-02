@@ -8,7 +8,7 @@ import 'package:emombti/ui/chat/view_models/chat_ai_viewmodel.dart';
 import 'package:emombti/ui/chat/view_models/chat_cloud_viewmodel.dart';
 import 'package:emombti/ui/chat/widgets/chat_ai.dart';
 import 'package:emombti/ui/chat/widgets/chat_cloud.dart';
-import 'package:emombti/ui/chat/widgets/rooms_screen.dart';
+import 'package:emombti/ui/chat/widgets/chats.dart';
 import 'package:emombti/ui/core/ui/widgets/layout.dart';
 import 'package:emombti/ui/core/ui/widgets/under_development.dart';
 import 'package:emombti/ui/explore/view_models/explore_viewmodel.dart';
@@ -283,7 +283,7 @@ GoRouter router(AuthState authState) => GoRouter(
           routes: [
             GoRoute(
               path: Routes.chatRooms,
-              builder: (context, state) => RoomsScreen(),
+              builder: (context, state) => ChatsScreen(),
             ),
           ],
         ),

@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../view_models/rooms_viewmodel.dart';
-import 'rooms_add_room.dart';
+import '../view_models/chats_viewmodel.dart';
+import 'chats_add.dart';
 
-class RoomsScreen extends StatelessWidget {
-  const RoomsScreen({super.key});
+class ChatsScreen extends StatelessWidget {
+  const ChatsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<RoomsViewModel>(
-      create: (context) => RoomsViewModel(
+    return ChangeNotifierProvider<ChatsViewModel>(
+      create: (context) => ChatsViewModel(
         authState: context.read(),
         chatRepository: context.read(),
         userRepository: context.read(),
@@ -31,9 +31,9 @@ class RoomsScreen extends StatelessWidget {
                 icon: const Icon(Icons.add_comment_outlined),
                 tooltip: 'Add Chat Room',
                 onPressed: () async {
-                  String? roomIdVal = await AddChatRoomDialog.show(
+                  String? roomIdVal = await ChatAddDialog.show(
                     context,
-                    context.read<RoomsViewModel>(),
+                    context.read<ChatsViewModel>(),
                   );
                   if (context.mounted) {
                     if (roomIdVal != null) {
@@ -44,7 +44,7 @@ class RoomsScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: Consumer2<RoomsViewModel, ChatState>(
+          body: Consumer2<ChatsViewModel, ChatState>(
             builder: (context, viewModel, chatState, _) {
               return RefreshIndicator(
                 onRefresh: () => viewModel.loadRoomsCommand.execute(),
@@ -113,7 +113,7 @@ class _RoomListTile extends StatelessWidget {
         child: Icon(Icons.delete_outline, color: theme.colorScheme.onError),
       ),
       onDismissed: (_) {
-        context.read<RoomsViewModel>().deleteRoomCommand.execute(room.id);
+        context.read<ChatsViewModel>().deleteRoomCommand.execute(room.id);
       },
       child: Column(
         children: [

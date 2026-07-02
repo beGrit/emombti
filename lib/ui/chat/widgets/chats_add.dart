@@ -1,27 +1,27 @@
 import 'package:emombti/domain/models/chat/chat.dart';
 import 'package:emombti/domain/models/user/user.dart';
-import 'package:emombti/ui/chat/view_models/rooms_viewmodel.dart';
+import 'package:emombti/ui/chat/view_models/chats_viewmodel.dart';
 import 'package:emombti/utils/result.dart';
 import 'package:flutter/material.dart';
 
-class AddChatRoomDialog extends StatefulWidget {
-  const AddChatRoomDialog({required this.viewModel, super.key});
+class ChatAddDialog extends StatefulWidget {
+  const ChatAddDialog({required this.viewModel, super.key});
 
-  final RoomsViewModel viewModel;
+  final ChatsViewModel viewModel;
 
-  static Future<String?> show(BuildContext context, RoomsViewModel viewModel) {
+  static Future<String?> show(BuildContext context, ChatsViewModel viewModel) {
     return showDialog<String>(
       context: context,
       barrierDismissible: true,
-      builder: (context) => AddChatRoomDialog(viewModel: viewModel),
+      builder: (context) => ChatAddDialog(viewModel: viewModel),
     );
   }
 
   @override
-  State<AddChatRoomDialog> createState() => _AddChatRoomDialogState();
+  State<ChatAddDialog> createState() => _ChatAddDialogState();
 }
 
-class _AddChatRoomDialogState extends State<AddChatRoomDialog> {
+class _ChatAddDialogState extends State<ChatAddDialog> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
@@ -150,7 +150,7 @@ class _SearchResultsList extends StatelessWidget {
     required this.onUserSelected,
   });
 
-  final RoomsViewModel viewModel;
+  final ChatsViewModel viewModel;
   final bool isCreating;
   final ValueChanged<User> onUserSelected;
 

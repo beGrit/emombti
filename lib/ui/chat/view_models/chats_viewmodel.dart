@@ -10,8 +10,8 @@ import 'package:emombti/utils/command.dart';
 import 'package:emombti/utils/result.dart';
 import 'package:flutter/material.dart';
 
-class RoomsViewModel extends ChangeNotifier {
-  RoomsViewModel({
+class ChatsViewModel extends ChangeNotifier {
+  ChatsViewModel({
     required AuthState authState,
     required ChatRepository chatRepository,
     required UserRepository userRepository,
