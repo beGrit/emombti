@@ -25,7 +25,9 @@ import 'package:emombti/ui/knowledge/widgets/knowledge_contents_article.dart';
 import 'package:emombti/ui/knowledge/widgets/knowledge_contents_screen.dart';
 import 'package:emombti/ui/login/view_models/login_viewmodel.dart';
 import 'package:emombti/ui/login/widgets/login_screen.dart';
+import 'package:emombti/ui/me/view_models/me_screen_viewmodel.dart';
 import 'package:emombti/ui/me/widgets/me_screen.dart';
+import 'package:emombti/ui/me/widgets/me_screen_background.dart';
 import 'package:emombti/ui/me/widgets/me_screen_feedback.dart';
 import 'package:emombti/ui/qr_code/widgets/qr_code_scanner.dart';
 import 'package:emombti/ui/quiz/view_models/survey_flow_viewmodel.dart';
@@ -80,7 +82,30 @@ GoRouter router(AuthState authState) => GoRouter(
     // Settings Route
     GoRoute(
       path: Routes.meStandalone,
-      builder: (context, state) => const MeScreen(showBackButton: true),
+      builder: (context, state) => MeScreen(
+        showBackButton: true,
+        viewModel: MeViewModel(
+          context.read(),
+          context.read(),
+          context.read(),
+          context.read(),
+        ),
+      ),
+    ),
+    // Me screen, change background.
+    GoRoute(
+      name: Routes.meBackground,
+      path: Routes.meBackground,
+      builder: (context, state) {
+        return MeBackgroundPicker(
+          viewModel: MeViewModel(
+            context.read(),
+            context.read(),
+            context.read(),
+            context.read(),
+          ),
+        );
+      },
     ),
     // Video Detail Route
     GoRoute(
@@ -291,7 +316,14 @@ GoRouter router(AuthState authState) => GoRouter(
           routes: [
             GoRoute(
               path: Routes.me,
-              builder: (context, state) => const MeScreen(),
+              builder: (context, state) => MeScreen(
+                viewModel: MeViewModel(
+                  context.read(),
+                  context.read(),
+                  context.read(),
+                  context.read(),
+                ),
+              ),
             ),
           ],
         ),

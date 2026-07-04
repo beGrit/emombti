@@ -40,6 +40,7 @@ class RepositoryManager extends ChangeNotifier {
     // Sync Typed Repository.
     userRepository = UserRepositoryDev(
       firestore: storageManager.firestoreService,
+      fileService: storageManager.fileServiceCloudFlare,
     );
     feedRepository = FeedRepositoryFirestore(
       firestoreService: storageManager.firestoreService,

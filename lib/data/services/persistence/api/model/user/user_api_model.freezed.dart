@@ -314,7 +314,7 @@ as DateTime,
 /// @nodoc
 mixin _$UserFirestoreApiModel {
 
- String get id; String? get email; String? get password; String? get name; String? get mbtiType; String? get introduce; String? get avatar; DateTime? get created; DateTime? get updated;
+ String get id; String? get email; String? get password; String? get name; String? get mbtiType; String? get introduce; String? get avatar; String? get backgroundImg; DateTime? get created; DateTime? get updated;
 /// Create a copy of UserFirestoreApiModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -327,16 +327,16 @@ $UserFirestoreApiModelCopyWith<UserFirestoreApiModel> get copyWith => _$UserFire
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserFirestoreApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.name, name) || other.name == name)&&(identical(other.mbtiType, mbtiType) || other.mbtiType == mbtiType)&&(identical(other.introduce, introduce) || other.introduce == introduce)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserFirestoreApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.name, name) || other.name == name)&&(identical(other.mbtiType, mbtiType) || other.mbtiType == mbtiType)&&(identical(other.introduce, introduce) || other.introduce == introduce)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.backgroundImg, backgroundImg) || other.backgroundImg == backgroundImg)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,password,name,mbtiType,introduce,avatar,created,updated);
+int get hashCode => Object.hash(runtimeType,id,email,password,name,mbtiType,introduce,avatar,backgroundImg,created,updated);
 
 @override
 String toString() {
-  return 'UserFirestoreApiModel(id: $id, email: $email, password: $password, name: $name, mbtiType: $mbtiType, introduce: $introduce, avatar: $avatar, created: $created, updated: $updated)';
+  return 'UserFirestoreApiModel(id: $id, email: $email, password: $password, name: $name, mbtiType: $mbtiType, introduce: $introduce, avatar: $avatar, backgroundImg: $backgroundImg, created: $created, updated: $updated)';
 }
 
 
@@ -347,7 +347,7 @@ abstract mixin class $UserFirestoreApiModelCopyWith<$Res>  {
   factory $UserFirestoreApiModelCopyWith(UserFirestoreApiModel value, $Res Function(UserFirestoreApiModel) _then) = _$UserFirestoreApiModelCopyWithImpl;
 @useResult
 $Res call({
- String id, String? email, String? password, String? name, String? mbtiType, String? introduce, String? avatar, DateTime? created, DateTime? updated
+ String id, String? email, String? password, String? name, String? mbtiType, String? introduce, String? avatar, String? backgroundImg, DateTime? created, DateTime? updated
 });
 
 
@@ -364,7 +364,7 @@ class _$UserFirestoreApiModelCopyWithImpl<$Res>
 
 /// Create a copy of UserFirestoreApiModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = freezed,Object? password = freezed,Object? name = freezed,Object? mbtiType = freezed,Object? introduce = freezed,Object? avatar = freezed,Object? created = freezed,Object? updated = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? email = freezed,Object? password = freezed,Object? name = freezed,Object? mbtiType = freezed,Object? introduce = freezed,Object? avatar = freezed,Object? backgroundImg = freezed,Object? created = freezed,Object? updated = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -373,6 +373,7 @@ as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to
 as String?,mbtiType: freezed == mbtiType ? _self.mbtiType : mbtiType // ignore: cast_nullable_to_non_nullable
 as String?,introduce: freezed == introduce ? _self.introduce : introduce // ignore: cast_nullable_to_non_nullable
 as String?,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
+as String?,backgroundImg: freezed == backgroundImg ? _self.backgroundImg : backgroundImg // ignore: cast_nullable_to_non_nullable
 as String?,created: freezed == created ? _self.created : created // ignore: cast_nullable_to_non_nullable
 as DateTime?,updated: freezed == updated ? _self.updated : updated // ignore: cast_nullable_to_non_nullable
 as DateTime?,
@@ -460,10 +461,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  DateTime? created,  DateTime? updated)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  String? backgroundImg,  DateTime? created,  DateTime? updated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UserFirestoreApiModel() when $default != null:
-return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.created,_that.updated);case _:
+return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.backgroundImg,_that.created,_that.updated);case _:
   return orElse();
 
 }
@@ -481,10 +482,10 @@ return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  DateTime? created,  DateTime? updated)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  String? backgroundImg,  DateTime? created,  DateTime? updated)  $default,) {final _that = this;
 switch (_that) {
 case _UserFirestoreApiModel():
-return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.created,_that.updated);case _:
+return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.backgroundImg,_that.created,_that.updated);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -501,10 +502,10 @@ return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  DateTime? created,  DateTime? updated)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? email,  String? password,  String? name,  String? mbtiType,  String? introduce,  String? avatar,  String? backgroundImg,  DateTime? created,  DateTime? updated)?  $default,) {final _that = this;
 switch (_that) {
 case _UserFirestoreApiModel() when $default != null:
-return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.created,_that.updated);case _:
+return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_that.introduce,_that.avatar,_that.backgroundImg,_that.created,_that.updated);case _:
   return null;
 
 }
@@ -516,7 +517,7 @@ return $default(_that.id,_that.email,_that.password,_that.name,_that.mbtiType,_t
 @JsonSerializable()
 
 class _UserFirestoreApiModel implements UserFirestoreApiModel {
-  const _UserFirestoreApiModel({required this.id, this.email, this.password, this.name, this.mbtiType, this.introduce, this.avatar, this.created, this.updated});
+  const _UserFirestoreApiModel({required this.id, this.email, this.password, this.name, this.mbtiType, this.introduce, this.avatar, this.backgroundImg, this.created, this.updated});
   factory _UserFirestoreApiModel.fromJson(Map<String, dynamic> json) => _$UserFirestoreApiModelFromJson(json);
 
 @override final  String id;
@@ -526,6 +527,7 @@ class _UserFirestoreApiModel implements UserFirestoreApiModel {
 @override final  String? mbtiType;
 @override final  String? introduce;
 @override final  String? avatar;
+@override final  String? backgroundImg;
 @override final  DateTime? created;
 @override final  DateTime? updated;
 
@@ -542,16 +544,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserFirestoreApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.name, name) || other.name == name)&&(identical(other.mbtiType, mbtiType) || other.mbtiType == mbtiType)&&(identical(other.introduce, introduce) || other.introduce == introduce)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserFirestoreApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.email, email) || other.email == email)&&(identical(other.password, password) || other.password == password)&&(identical(other.name, name) || other.name == name)&&(identical(other.mbtiType, mbtiType) || other.mbtiType == mbtiType)&&(identical(other.introduce, introduce) || other.introduce == introduce)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.backgroundImg, backgroundImg) || other.backgroundImg == backgroundImg)&&(identical(other.created, created) || other.created == created)&&(identical(other.updated, updated) || other.updated == updated));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,email,password,name,mbtiType,introduce,avatar,created,updated);
+int get hashCode => Object.hash(runtimeType,id,email,password,name,mbtiType,introduce,avatar,backgroundImg,created,updated);
 
 @override
 String toString() {
-  return 'UserFirestoreApiModel(id: $id, email: $email, password: $password, name: $name, mbtiType: $mbtiType, introduce: $introduce, avatar: $avatar, created: $created, updated: $updated)';
+  return 'UserFirestoreApiModel(id: $id, email: $email, password: $password, name: $name, mbtiType: $mbtiType, introduce: $introduce, avatar: $avatar, backgroundImg: $backgroundImg, created: $created, updated: $updated)';
 }
 
 
@@ -562,7 +564,7 @@ abstract mixin class _$UserFirestoreApiModelCopyWith<$Res> implements $UserFires
   factory _$UserFirestoreApiModelCopyWith(_UserFirestoreApiModel value, $Res Function(_UserFirestoreApiModel) _then) = __$UserFirestoreApiModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String? email, String? password, String? name, String? mbtiType, String? introduce, String? avatar, DateTime? created, DateTime? updated
+ String id, String? email, String? password, String? name, String? mbtiType, String? introduce, String? avatar, String? backgroundImg, DateTime? created, DateTime? updated
 });
 
 
@@ -579,7 +581,7 @@ class __$UserFirestoreApiModelCopyWithImpl<$Res>
 
 /// Create a copy of UserFirestoreApiModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = freezed,Object? password = freezed,Object? name = freezed,Object? mbtiType = freezed,Object? introduce = freezed,Object? avatar = freezed,Object? created = freezed,Object? updated = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? email = freezed,Object? password = freezed,Object? name = freezed,Object? mbtiType = freezed,Object? introduce = freezed,Object? avatar = freezed,Object? backgroundImg = freezed,Object? created = freezed,Object? updated = freezed,}) {
   return _then(_UserFirestoreApiModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
@@ -588,6 +590,7 @@ as String?,name: freezed == name ? _self.name : name // ignore: cast_nullable_to
 as String?,mbtiType: freezed == mbtiType ? _self.mbtiType : mbtiType // ignore: cast_nullable_to_non_nullable
 as String?,introduce: freezed == introduce ? _self.introduce : introduce // ignore: cast_nullable_to_non_nullable
 as String?,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
+as String?,backgroundImg: freezed == backgroundImg ? _self.backgroundImg : backgroundImg // ignore: cast_nullable_to_non_nullable
 as String?,created: freezed == created ? _self.created : created // ignore: cast_nullable_to_non_nullable
 as DateTime?,updated: freezed == updated ? _self.updated : updated // ignore: cast_nullable_to_non_nullable
 as DateTime?,

@@ -4,6 +4,7 @@ abstract final class Routes {
   static const String knowledgeContents = '/knowledge_contents';
   static const String me = '/me';
   static const String meStandalone = '/me-standalone';
+  static const String meBackground = '/me/background';
   static const String settings = '/settings';
   static const String userInfo = '/user_info';
   static const String qRCodeScanner = '/qr_code/scanner';

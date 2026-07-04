@@ -50,6 +50,7 @@ _UserFirestoreApiModel _$UserFirestoreApiModelFromJson(
   mbtiType: json['mbtiType'] as String?,
   introduce: json['introduce'] as String?,
   avatar: json['avatar'] as String?,
+  backgroundImg: json['backgroundImg'] as String?,
   created: json['created'] == null
       ? null
       : DateTime.parse(json['created'] as String),
@@ -68,6 +69,7 @@ Map<String, dynamic> _$UserFirestoreApiModelToJson(
   'mbtiType': instance.mbtiType,
   'introduce': instance.introduce,
   'avatar': instance.avatar,
+  'backgroundImg': instance.backgroundImg,
   'created': instance.created?.toIso8601String(),
   'updated': instance.updated?.toIso8601String(),
 };

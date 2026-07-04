@@ -1,3 +1,4 @@
+import 'package:emombti/data/services/persistence/api/file_service.dart';
 import 'package:emombti/data/services/persistence/api/firestore_service.dart';
 import 'package:emombti/data/services/persistence/api/model/user/user_api_model.dart';
 import 'package:emombti/domain/models/common/common.dart';
@@ -13,10 +14,14 @@ class UserRepositoryDev implements UserRepository {
     maximumSize: 200,
   );
 
-  UserRepositoryDev({required FirestoreService firestore})
-    : _firestore = firestore;
+  UserRepositoryDev({
+    required FirestoreService firestore,
+    required FileService fileService,
+  }) : _fileService = fileService,
+       _firestore = firestore;
 
   final FirestoreService _firestore;
+  final FileService _fileService;
 
   @override
   Future<Result<void>> createUserUsingEmailPassword({
@@ -133,8 +138,18 @@ class UserRepositoryDev implements UserRepository {
     String id,
     List<int> bytes,
     String filename,
-  ) {
-    throw UnimplementedError();
+  ) async {
+    String objectName = 'users/avatar/$filename';
+    await _fileService.saveFile(objectName, bytes, filename);
+    Uri uri = _fileService.getUri(objectName);
+    UserFirestoreApiModel apiModel = await _firestore.saveUser(
+      UserFirestoreApiModel(
+        id: id,
+        avatar: uri.toString(),
+        updated: DateTime.now(),
+      ),
+    );
+    return Result.ok(_mapUserApiModelToDomain(apiModel));
   }
 
   User _mapUserApiModelToDomain(UserFirestoreApiModel apiModel) {
@@ -147,11 +162,33 @@ class UserRepositoryDev implements UserRepository {
       avatar: apiModel.avatar != null
           ? AppFile(uri: Uri.parse(apiModel.avatar ?? ''), name: '')
           : null,
+      backgroundImg: apiModel.backgroundImg != null
+          ? AppFile(uri: Uri.parse(apiModel.backgroundImg ?? ''), name: '')
+          : null,
     );
   }
 
   @override
   Future<Result<User>> getRobot(String id) {
     throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<User>> updateBackgroundImg(
+    String id,
+    List<int> bytes,
+    String filename,
+  ) async {
+    String objectName = 'users/background/$filename';
+    await _fileService.saveFile(objectName, bytes, filename);
+    Uri uri = _fileService.getUri(objectName);
+    UserFirestoreApiModel apiModel = await _firestore.saveUser(
+      UserFirestoreApiModel(
+        id: id,
+        backgroundImg: uri.toString(),
+        updated: DateTime.now(),
+      ),
+    );
+    return Result.ok(_mapUserApiModelToDomain(apiModel));
   }
 }

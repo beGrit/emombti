@@ -37,6 +37,7 @@ abstract class UserFirestoreApiModel with _$UserFirestoreApiModel {
     String? mbtiType,
     String? introduce,
     String? avatar,
+    String? backgroundImg,
     DateTime? created,
     DateTime? updated,
   }) = _UserFirestoreApiModel;

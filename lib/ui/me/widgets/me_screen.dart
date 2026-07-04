@@ -2,13 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emombti/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 
 import '../view_models/me_screen_viewmodel.dart';
 import 'me_screen_avatar.dart';
 
 class MeScreen extends StatefulWidget {
-  const MeScreen({super.key, this.showBackButton = false});
+  final MeViewModel viewModel;
+
+  const MeScreen({
+    super.key,
+    this.showBackButton = false,
+    required this.viewModel,
+  });
 
   final bool showBackButton;
 
@@ -38,17 +43,10 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
     final double headerHeight = MediaQuery.of(context).size.height < 400
         ? 280
         : 250;
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<MeViewModel>(
-          create: (context) =>
-              MeViewModel(context.read(), context.read(), context.read()),
-        ),
-      ],
-      builder: (context, _) {
-        final viewModel = context.watch<MeViewModel>();
-        final user = viewModel.user;
-
+    return ListenableBuilder(
+      listenable: widget.viewModel,
+      builder: (context, child) {
+        final user = widget.viewModel.user;
         return Scaffold(
           body: DefaultTabController(
             length: 3,
@@ -93,24 +91,37 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
                         return Stack(
                           fit: StackFit.expand,
                           children: [
-                            user?.backgroundImg != null
-                                ? CachedNetworkImage(
-                                    imageUrl:
-                                        'https://cdn.pixabay.com/photo/2021/08/25/20/42/field-6574455_1280.jpg',
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  )
-                                : Container(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainer,
+                            GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                context.push(Routes.meBackground);
+                              },
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  user?.backgroundImg != null
+                                      ? CachedNetworkImage(
+                                          imageUrl: user!.backgroundImg!.uri
+                                              .toString(),
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) =>
+                                              const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              const Icon(Icons.error),
+                                        )
+                                      : Container(
+                                          color: theme
+                                              .colorScheme
+                                              .surfaceContainer,
+                                        ),
+                                  Container(
+                                    color: Colors.black.withValues(alpha: 0.3),
                                   ),
-                            Container(
-                              color: Colors.black.withValues(alpha: 0.3),
+                                ],
+                              ),
                             ),
                             Opacity(
                               opacity: opacity,
@@ -119,7 +130,7 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const SizedBox(height: kToolbarHeight),
-                                    MeScreenAvatar(viewModel: viewModel),
+                                    MeScreenAvatar(viewModel: widget.viewModel),
                                     const SizedBox(height: 12),
                                     Text(
                                       user?.name ?? "Unknown Name",
@@ -244,11 +255,23 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
                     builder: (context, child) {
                       switch (_tabController.index) {
                         case 0:
-                          return _buildMyActivityTab(context, theme, viewModel);
+                          return _buildMyActivityTab(
+                            context,
+                            theme,
+                            widget.viewModel,
+                          );
                         case 1:
-                          return _buildHistoryTab(context, theme, viewModel);
+                          return _buildHistoryTab(
+                            context,
+                            theme,
+                            widget.viewModel,
+                          );
                         case 2:
-                          return _buildAboutMeTab(context, theme, viewModel);
+                          return _buildAboutMeTab(
+                            context,
+                            theme,
+                            widget.viewModel,
+                          );
                         default:
                           return const SliverToBoxAdapter(
                             child: SizedBox.shrink(),

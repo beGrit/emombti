@@ -35,4 +35,11 @@ abstract class UserRepository {
     List<int> bytes,
     String filename,
   );
+
+  /// Updates the user's background image.
+  Future<Result<User>> updateBackgroundImg(
+    String id,
+    List<int> bytes,
+    String filename,
+  );
 }
