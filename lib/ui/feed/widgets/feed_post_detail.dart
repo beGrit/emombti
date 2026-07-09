@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:emombti/domain/models/feed/feed.dart';
 import 'package:emombti/routing/routes.dart';
 import 'package:emombti/ui/core/ui/widgets/app_bar.dart';
@@ -5,6 +7,7 @@ import 'package:emombti/ui/feed/view_models/feed_post_detail_viewmodel.dart';
 import 'package:emombti/ui/feed/widgets/feed_post_quill_viewer_body.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:grit_soft_feed_social/grit_soft_feed_social.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class FeedPostDetail extends StatefulWidget {
@@ -17,13 +20,60 @@ class FeedPostDetail extends StatefulWidget {
 }
 
 class _FeedPostDetailState extends State<FeedPostDetail> {
+  late final ScrollController _scrollController;
+  final GlobalKey _commentsKey = GlobalKey();
+  bool _showComposer = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final RenderBox? renderBox =
+        _commentsKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    final position = renderBox.localToGlobal(Offset.zero);
+    final double widgetTopOnScreen = position.dy;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final bool isVisibleOnScreen = widgetTopOnScreen < screenHeight;
+    if (isVisibleOnScreen && !_showComposer) {
+      setState(() => _showComposer = true);
+    } else if (!isVisibleOnScreen && _showComposer) {
+      setState(() => _showComposer = false);
+    }
+  }
+
+  void _onKeyboardHeightChanged(double height) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (!mounted || !_scrollController.hasClients || height == 0) {
+        return;
+      }
+      _scrollController.jumpTo(
+        min(
+          _scrollController.offset + height,
+          _scrollController.position.maxScrollExtent,
+        ),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainer,
       appBar: StandardAppBar(
         title: 'Post',
         leading: IconButton(
@@ -31,77 +81,140 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
           icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: ListenableBuilder(
-        listenable: widget.viewModel.loadPostCommand,
-        builder: (context, _) {
-          final command = widget.viewModel.loadPostCommand;
+      body: Stack(
+        children: [
+          ListenableBuilder(
+            listenable: widget.viewModel.loadPostCommand,
+            builder: (context, _) {
+              final command = widget.viewModel.loadPostCommand;
 
-          if (command.running) {
-            return const Center(child: CircularProgressIndicator());
-          }
+              if (command.running) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          if (command.error) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'Failed to load post',
-                      style: theme.textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    FilledButton(
-                      onPressed: command.execute,
-                      child: const Text('Try again'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          final post = widget.viewModel.post;
-          if (post == null) {
-            return Center(
-              child: Text('Post not found', style: theme.textTheme.titleMedium),
-            );
-          }
-
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _AuthorSection(post: post),
-                const SizedBox(height: 16),
-                if (post.title != null && post.title!.isNotEmpty) ...[
-                  Text(
-                    post.title!,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+              if (command.error) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Failed to load post',
+                          style: theme.textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        FilledButton(
+                          onPressed: command.execute,
+                          child: const Text('Try again'),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
+                );
+              }
+
+              final post = widget.viewModel.post;
+              if (post == null) {
+                return Center(
+                  child: Text(
+                    'Post not found',
+                    style: theme.textTheme.titleMedium,
+                  ),
+                );
+              }
+
+              return CustomScrollView(
+                controller: _scrollController,
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                slivers: [
+                  DecoratedSliver(
+                    decoration: BoxDecoration(color: theme.colorScheme.surface),
+                    sliver: SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      sliver: SliverToBoxAdapter(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _AuthorSection(post: post),
+                            const SizedBox(height: 16),
+                            if (post.title != null &&
+                                post.title!.isNotEmpty) ...[
+                              Text(
+                                post.title!,
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
+                            if (post.body != null) ...[
+                              _PostBody(body: post.body!),
+                              const SizedBox(height: 16),
+                            ],
+                            if (post.photos.isNotEmpty) ...[
+                              _PhotoGallery(post: post),
+                              const SizedBox(height: 16),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+                  DecoratedSliver(
+                    decoration: BoxDecoration(color: theme.colorScheme.surface),
+                    sliver: SliverMainAxisGroup(
+                      slivers: [
+                        // SliverToBoxAdapter(
+                        //   child: SocialActions(
+                        //     displayType: ActionsDisplayType.horizontal,
+                        //     actionsController:
+                        //         widget.viewModel.actionsController,
+                        //   ),
+                        // ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: Divider(),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: SizedBox(key: _commentsKey, height: 0),
+                        ),
+                        CommentAnimatedList(
+                          asSliver: true,
+                          commentController: widget.viewModel.commentController,
+                        ),
+                        ComposerHeight(
+                          onKeyboardHeightChanged: _onKeyboardHeightChanged,
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
-                if (post.body != null) ...[
-                  _PostBody(body: post.body!),
-                  const SizedBox(height: 16),
-                ],
-                if (post.photos.isNotEmpty) ...[
-                  _PhotoGallery(post: post),
-                  const SizedBox(height: 16),
-                ],
-                _ActionRow(),
-              ],
+              );
+            },
+          ),
+          if (_showComposer)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: null,
+              bottom: 0,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn,
+                opacity: _showComposer ? 1.0 : 0.0,
+                child: Composer(),
+              ),
             ),
-          );
-        },
+        ],
       ),
     );
   }
@@ -307,32 +420,6 @@ class _PhotoGallery extends StatelessWidget {
           ),
         );
       }).toList(),
-    );
-  }
-}
-
-class _ActionRow extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      spacing: 8,
-      children: [
-        FilledButton.tonalIcon(
-          onPressed: () {},
-          icon: const Icon(Icons.favorite_border),
-          label: const Text('Like'),
-        ),
-        FilledButton.tonalIcon(
-          onPressed: () {},
-          icon: const Icon(Icons.bookmark_border),
-          label: const Text('Save'),
-        ),
-        FilledButton.tonalIcon(
-          onPressed: () {},
-          icon: const Icon(Icons.share_outlined),
-          label: const Text('Share'),
-        ),
-      ],
     );
   }
 }

@@ -210,12 +210,16 @@ GoRouter router(AuthState authState) => GoRouter(
         final postId = state.pathParameters['id'] ?? '';
 
         return ChangeNotifierProvider(
-          create: (context) => FeedPostDetailViewmodel(
-            feedPostId: postId,
-            feedRepository: context.read(),
-            userRepository: context.read(),
-          )..loadPostCommand.execute(),
-
+          create: (context) {
+            var viewModel = FeedPostDetailViewmodel(
+              feedPostId: postId,
+              feedRepository: context.read(),
+              userRepository: context.read(),
+            );
+            viewModel.loadPostCommand.execute();
+            viewModel.loadSocialCommand.execute();
+            return viewModel;
+          },
           child: Consumer<FeedPostDetailViewmodel>(
             builder: (context, viewModel, child) =>
                 FeedPostDetail(viewModel: viewModel),

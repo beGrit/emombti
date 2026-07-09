@@ -2,13 +2,13 @@ import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
 import 'package:emombti/routing/routes.dart';
-import 'package:emombti/ui/robot/view_models/robot_viewmodel.dart';
-import 'package:emombti/ui/robot/widgets/robot.dart';
 import 'package:emombti/ui/explore/view_models/explore_viewmodel.dart';
 import 'package:emombti/ui/feed/view_models/feed_post_viewmodel.dart';
 import 'package:emombti/ui/feed/view_models/feed_reel_viewmodel.dart';
 import 'package:emombti/ui/feed/widgets/feed_post.dart';
-import 'package:emombti/ui/feed/widgets/feed_reel.dart';
+import 'package:emombti/ui/feed/widgets/feed_reels.dart';
+import 'package:emombti/ui/robot/view_models/robot_viewmodel.dart';
+import 'package:emombti/ui/robot/widgets/robot.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -92,6 +92,9 @@ class _ExploreScreenState extends State<ExploreScreen>
       ],
       child: Builder(
         builder: (context) {
+          final orientation = MediaQuery.of(context).orientation;
+          final bool isLandscape = orientation == Orientation.landscape;
+
           return Scaffold(
             // We handle the background layout ourselves, so body is completely full-screen
             body: Stack(
@@ -104,73 +107,72 @@ class _ExploreScreenState extends State<ExploreScreen>
                       _ExploreTabBody(tab: tab, tabController: _tabController),
                   ],
                 ),
-
-                // Layer 2: Floating Custom AppBar
-                Positioned(
-                  // MediaQuery top padding ensures it floats safely below the status bar notch
-                  top: MediaQuery.of(context).padding.top,
-                  left: 16.0,
-                  right: 16.0,
-                  child: SizedBox(
-                    height:
-                        56.0, // Slightly taller for a comfortable floating bar action
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 8.0), // Padding before the button
-                        ListenableBuilder(
-                          listenable: vm,
-                          builder: (context, _) {
-                            final currentType =
-                                vm.tabs[vm.selectedTabIndex].type;
-                            final isVideosTab =
-                                currentType == ExploreTabType.videos;
-                            return IconButton(
-                              color: theme.colorScheme.primary,
-                              icon: const Icon(Icons.add),
-                              onPressed: isVideosTab
-                                  ? () async {
-                                      var feedViewModel = context
-                                          .read<FeedReelViewModel>();
-                                      await context.push(Routes.feedReelEditor);
-                                      if (mounted) {
-                                        debugPrint(
-                                          'feedViewModel.loadReelsCommand',
+                if (!isLandscape)
+                  // Layer 2: Floating Custom AppBar
+                  Positioned(
+                    // MediaQuery top padding ensures it floats safely below the status bar notch
+                    top: MediaQuery.of(context).padding.top,
+                    left: 16.0,
+                    right: 16.0,
+                    child: SizedBox(
+                      height:
+                          56.0, // Slightly taller for a comfortable floating bar action
+                      child: Row(
+                        spacing: 8,
+                        children: [
+                          ListenableBuilder(
+                            listenable: vm,
+                            builder: (context, _) {
+                              final currentType =
+                                  vm.tabs[vm.selectedTabIndex].type;
+                              final isVideosTab =
+                                  currentType == ExploreTabType.videos;
+                              return IconButton(
+                                color: theme.colorScheme.primary,
+                                icon: const Icon(Icons.add),
+                                onPressed: isVideosTab
+                                    ? () async {
+                                        var feedViewModel = context
+                                            .read<FeedReelViewModel>();
+                                        await context.push(
+                                          Routes.feedReelEditor,
                                         );
-                                        feedViewModel.loadReelsCommand
-                                            .execute();
+                                        if (mounted) {
+                                          feedViewModel.loadReelsCommand
+                                              .execute();
+                                        }
                                       }
-                                    }
-                                  : null,
-                            );
-                          },
-                        ),
-                        Expanded(
-                          child: TabBar(
-                            controller: _tabController,
-                            isScrollable: true,
-                            tabAlignment: TabAlignment.start,
-                            labelColor: theme.colorScheme.onSurface,
-                            unselectedLabelColor:
-                                theme.colorScheme.onSurfaceVariant,
-                            dividerColor: Colors.transparent,
-                            // Removes the default full-width bottom line indicator styling
-                            indicatorSize: TabBarIndicatorSize.label,
-                            tabs: [
-                              for (final tab in vm.tabs)
-                                Tab(
-                                  key: ValueKey<String>(tab.id),
-                                  text: tab.label,
-                                ),
-                            ],
+                                    : null,
+                              );
+                            },
                           ),
-                        ),
-                        const SizedBox(
-                          width: 16.0,
-                        ), // Uniform padding at the end
-                      ],
+                          Expanded(
+                            child: TabBar(
+                              controller: _tabController,
+                              isScrollable: true,
+                              tabAlignment: TabAlignment.start,
+                              labelColor: theme.colorScheme.onSurface,
+                              unselectedLabelColor:
+                                  theme.colorScheme.onSurfaceVariant,
+                              dividerColor: Colors.transparent,
+                              // Removes the default full-width bottom line indicator styling
+                              indicatorSize: TabBarIndicatorSize.label,
+                              tabs: [
+                                for (final tab in vm.tabs)
+                                  Tab(
+                                    key: ValueKey<String>(tab.id),
+                                    text: tab.label,
+                                  ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 16.0,
+                          ), // Uniform padding at the end
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           );
@@ -195,7 +197,7 @@ class _ExploreTabBody extends StatelessWidget {
         return const FeedPostScreen();
 
       case ExploreTabType.videos:
-        return FeedReel(tabController: tabController, tabIndex: 2);
+        return FeedReels(tabController: tabController, tabIndex: 2);
       case ExploreTabType.chatAiMbti:
         return Consumer<ChatBotViewModel>(
           builder: (context, __, child) => ChatBot(viewModel: __),

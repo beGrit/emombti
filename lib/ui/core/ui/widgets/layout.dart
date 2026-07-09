@@ -16,10 +16,18 @@ class AppLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final bool isDesktop = size.width >= 600;
+
+    final orientation = MediaQuery.of(context).orientation;
+    final bool isLandscape = orientation == Orientation.landscape;
+    final bool isDesktop = size.width >= 600 && size.height >= 600;
     final bool isExtended = size.width >= 1000;
     ColorScheme colorScheme = Theme.of(context).colorScheme;
     TextTheme textTheme = Theme.of(context).textTheme;
+
+    if (!isDesktop && isLandscape) {
+      return Scaffold(body: navigationShell);
+    }
+
     if (isDesktop) {
       return Scaffold(
         body: Row(

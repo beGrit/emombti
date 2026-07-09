@@ -5,6 +5,7 @@ import 'package:emombti/domain/models/user/user.dart';
 import 'package:emombti/utils/command.dart';
 import 'package:emombti/utils/result.dart';
 import 'package:flutter/material.dart';
+import 'package:grit_soft_feed_social/grit_soft_feed_social.dart';
 
 class FeedPostDetailViewmodel extends ChangeNotifier {
   FeedPostDetailViewmodel({
@@ -14,6 +15,9 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
   }) : _feedRepository = feedRepository,
        _userRepository = userRepository {
     loadPostCommand = Command0<Post?>(_loadPost);
+    loadSocialCommand = Command0<SocialMeta>(_loadSocial);
+    commentController = CommentController();
+    actionsController = ActionsController(socialMeta: SocialMeta(id: '123'));
   }
 
   final String feedPostId;
@@ -24,6 +28,12 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
   Post? get post => _post;
 
   late final Command0<Post?> loadPostCommand;
+
+  late final Command0<SocialMeta> loadSocialCommand;
+
+  late final CommentController commentController;
+
+  late final ActionsController actionsController;
 
   Future<Result<Post?>> _loadPost() async {
     final result = await _feedRepository.getPostById(feedPostId);
@@ -36,6 +46,37 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
         break;
     }
     return result;
+  }
+
+  Future<Result<SocialMeta>> _loadSocial() async {
+    SocialMeta data = SocialMeta(
+      id: 'unknown',
+      comments: [
+        Comment(
+          id: '123',
+          authId: '1',
+          authorAvatarUrl: '',
+          authorMbti: 'INFP',
+          content: '123',
+        ),
+        Comment(
+          id: '124',
+          authId: '1',
+          authorAvatarUrl: '',
+          authorMbti: 'INFP',
+          content: '123',
+        ),
+        Comment(
+          id: '125',
+          authId: '1',
+          authorAvatarUrl: '',
+          authorMbti: 'INFP',
+          content: '123',
+        ),
+      ],
+    );
+    commentController.setComments(data.comments ?? []);
+    return Result.ok(data);
   }
 
   Future<Post> _loadAuthor(Post post) async {
