@@ -1,6 +1,8 @@
 import 'package:emombti/app_state/auth.dart';
+import 'package:emombti/data/repositories/activity/activity_repository.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
+import 'package:emombti/domain/models/activity/activity.dart';
 import 'package:emombti/domain/models/user/user.dart';
 import 'package:emombti/domain/use_cases/user/user_avatar_update_use_case.dart';
 import 'package:emombti/utils/command.dart';
@@ -8,30 +10,58 @@ import 'package:emombti/utils/result.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class MeViewModel extends ChangeNotifier {
-  MeViewModel(
+class MeScreenViewModel extends ChangeNotifier {
+  MeScreenViewModel(
+    this._activityRepository,
     this._authRepository,
     this._userRepository,
     this._authState,
     this._userAvatarUpdateUseCase,
   ) {
     _authState.addListener(_onAuthStateChanged);
-    pickAndUploadAvatarCommand = Command0<User>(pickAndUploadAvatar);
+    loadActivity = Command0<List<Activity>>(_loadActivityInternal);
+    pickAndUploadAvatarCommand = Command0<User>(_pickAndUploadAvatar);
     pickAndUploadBackgoundImgCommand = Command0<User>(
       _pickAndUploadBackgroundImg,
     );
+    deleteActivityCommand = Command1<void, String>(_deleteActivity);
   }
 
+  final ActivityRepository _activityRepository;
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
   final AuthState _authState;
   final UserAvatarUpdateUseCase _userAvatarUpdateUseCase;
+  late final Command0<List<Activity>> loadActivity;
   late final Command0<User> pickAndUploadAvatarCommand;
   late final Command0<User> pickAndUploadBackgoundImgCommand;
+  late final Command1<void, String> deleteActivityCommand;
+
+  List<Activity> _activities = [];
+  List<Activity> get activities => _activities;
 
   User? get user => _authState.user;
 
-  Future<Result<User>> pickAndUploadAvatar() async {
+  Future<Result<List<Activity>>> _loadActivityInternal() async {
+    final userId = user?.id;
+    if (userId == null || userId.isEmpty) {
+      _activities = [];
+      notifyListeners();
+      return Result.ok(_activities);
+    }
+
+    final result = await _activityRepository.getActivities(userId);
+    switch (result) {
+      case Ok<List<Activity>>():
+        _activities = result.value;
+        notifyListeners();
+      case Error<List<Activity>>():
+        break;
+    }
+    return result;
+  }
+
+  Future<Result<User>> _pickAndUploadAvatar() async {
     Result<User> result = await _userAvatarUpdateUseCase.pickAndUploadAvatar(
       user?.id ?? '',
       ImagePicker(),
@@ -69,6 +99,20 @@ class MeViewModel extends ChangeNotifier {
     return result;
   }
 
+  Future<Result<void>> _deleteActivity(String activityId) async {
+    final userId = user?.id;
+    if (userId == null) {
+      return Result.error(Exception('User not authenticated'));
+    }
+
+    final result = await _activityRepository.deleteActivity(userId, activityId);
+    if (result is Ok) {
+      _activities.removeWhere((a) => a.id == activityId);
+      notifyListeners();
+    }
+    return result;
+  }
+
   Future<void> logout() async {
     final result = await _authRepository.logout();
     if (result is Ok) {
@@ -77,6 +121,9 @@ class MeViewModel extends ChangeNotifier {
   }
 
   void _onAuthStateChanged() {
+    if (user == null && _activities.isNotEmpty) {
+      _activities = [];
+    }
     notifyListeners();
   }
 

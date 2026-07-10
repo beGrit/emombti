@@ -80,6 +80,49 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back),
         ),
+        actions: [
+          ListenableBuilder(
+            listenable: widget.viewModel.loadPostCommand,
+            builder: (context, _) {
+              final post = widget.viewModel.post;
+              if (post == null ||
+                  post.author.id != widget.viewModel.currentUserId) {
+                return const SizedBox.shrink();
+              }
+              return IconButton(
+                onPressed: () async {
+                  final confirmed = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Delete Post'),
+                      content: const Text(
+                        'Are you sure you want to delete this post? This action cannot be undone.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => context.pop(false),
+                          child: const Text('Cancel'),
+                        ),
+                        FilledButton(
+                          onPressed: () => context.pop(true),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (confirmed == true && mounted) {
+                    await widget.viewModel.deletePostCommand.execute(post.id!);
+                    if (mounted) {
+                      context.pop();
+                    }
+                  }
+                },
+                icon: const Icon(Icons.delete_outline),
+              );
+            },
+          ),
+        ],
       ),
       body: Stack(
         children: [

@@ -3,7 +3,7 @@ import 'package:emombti/ui/me/view_models/me_screen_viewmodel.dart';
 import 'package:flutter/material.dart';
 
 class MeBackgroundPicker extends StatefulWidget {
-  final MeViewModel viewModel;
+  final MeScreenViewModel viewModel;
   const MeBackgroundPicker({super.key, required this.viewModel});
 
   @override

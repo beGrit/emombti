@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:emombti/routing/routes.dart';
+import 'package:emombti/ui/me/widgets/me_screen_about_me.dart';
+import 'package:emombti/ui/me/widgets/me_screen_activity_list.dart';
+import 'package:emombti/ui/me/widgets/me_screen_history.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,7 +10,7 @@ import '../view_models/me_screen_viewmodel.dart';
 import 'me_screen_avatar.dart';
 
 class MeScreen extends StatefulWidget {
-  final MeViewModel viewModel;
+  final MeScreenViewModel viewModel;
 
   const MeScreen({
     super.key,
@@ -255,23 +258,13 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
                     builder: (context, child) {
                       switch (_tabController.index) {
                         case 0:
-                          return _buildMyActivityTab(
-                            context,
-                            theme,
-                            widget.viewModel,
+                          return MeScreenActivityList(
+                            viewModel: widget.viewModel,
                           );
                         case 1:
-                          return _buildHistoryTab(
-                            context,
-                            theme,
-                            widget.viewModel,
-                          );
+                          return MeScreenHistory();
                         case 2:
-                          return _buildAboutMeTab(
-                            context,
-                            theme,
-                            widget.viewModel,
-                          );
+                          return MeScreenAboutMe();
                         default:
                           return const SliverToBoxAdapter(
                             child: SizedBox.shrink(),
@@ -285,162 +278,6 @@ class _MeScreenState extends State<MeScreen> with TickerProviderStateMixin {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildMyActivityTab(
-    BuildContext context,
-    ThemeData theme,
-    MeViewModel viewModel,
-  ) {
-    return SliverMainAxisGroup(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
-            child: SegmentedButton<String>(
-              segments: const <ButtonSegment<String>>[
-                ButtonSegment<String>(
-                  value: 'Posts',
-                  label: Text('Posts'),
-                  icon: Icon(Icons.article_outlined, size: 18),
-                ),
-                ButtonSegment<String>(
-                  value: 'Videos',
-                  label: Text('Videos'),
-                  icon: Icon(Icons.videocam_outlined, size: 18),
-                ),
-                ButtonSegment<String>(
-                  value: 'Popular',
-                  label: Text('Popular'),
-                  icon: Icon(Icons.local_fire_department_outlined, size: 18),
-                ),
-              ],
-              selected: const {'Posts'},
-              onSelectionChanged: (Set<String> newSelection) {},
-              style: SegmentedButton.styleFrom(
-                visualDensity: VisualDensity.compact,
-              ),
-            ),
-          ),
-        ),
-
-        SliverPadding(
-          padding: const EdgeInsets.all(16.0),
-          sliver: SliverGrid(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: 0.85,
-            ),
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        color: theme.colorScheme.primaryContainer.withValues(
-                          alpha: 0.3,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.article_outlined,
-                            color: theme.colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Activity Post #$index",
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }, childCount: 0),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHistoryTab(
-    BuildContext context,
-    ThemeData theme,
-    MeViewModel viewModel,
-  ) {
-    return SliverPadding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundColor: theme.colorScheme.tertiaryContainer,
-              child: Icon(
-                Icons.analytics_outlined,
-                color: theme.colorScheme.tertiary,
-                size: 20,
-              ),
-            ),
-            title: Text("MBTI Test Round ${8 - index}"),
-            subtitle: Text("Completed on 2026-05-${15 - index}"),
-            trailing: const Icon(Icons.chevron_right, size: 18),
-            onTap: () {},
-          );
-        }, childCount: 0),
-      ),
-    );
-  }
-
-  Widget _buildAboutMeTab(
-    BuildContext context,
-    ThemeData theme,
-    MeViewModel viewModel,
-  ) {
-    return SliverList(
-      delegate: SliverChildListDelegate([
-        const SizedBox(height: 8),
-        _buildListTile(
-          Icons.person_outline,
-          "Account Info",
-          () => context.push(Routes.userInfo),
-        ),
-        _buildListTile(Icons.star_outline, "Saved & Favoriates", () {}),
-        _buildListTile(
-          Icons.social_distance,
-          'Social: Comments & Likes',
-          () {},
-        ),
-        _buildListTile(
-          Icons.help_outline,
-          "Help & Feedback",
-          () => context.push(Routes.feedback),
-        ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Divider(),
-        ),
-        const SizedBox(height: 50),
-      ]),
-    );
-  }
-
-  Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      dense: true,
-      leading: Icon(icon),
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right, size: 20),
-      onTap: onTap,
     );
   }
 

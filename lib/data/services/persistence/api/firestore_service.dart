@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emombti/data/services/persistence/api/model/activity/activity_api_model.dart';
 import 'package:emombti/data/services/persistence/api/model/chat/chat_api_model.dart';
 import 'package:emombti/data/services/persistence/api/model/feed/feed_api_model.dart';
 import 'package:emombti/data/services/persistence/api/model/quiz/quiz_api_model.dart';
@@ -32,6 +33,9 @@ class FirestoreService {
 
   CollectionReference<Map<String, dynamic>> _userSurveyFlows(String userId) =>
       _users.doc(userId).collection('survey_flows');
+
+  CollectionReference<Map<String, dynamic>> _userActivities(String userId) =>
+      _users.doc(userId).collection('activities');
 
   CollectionReference<Map<String, dynamic>> get _chats =>
       _firestore.collection('chats');
@@ -166,6 +170,90 @@ class FirestoreService {
     return query.docs
         .map((doc) => FeedActivityApiModel.fromJson(doc.data()))
         .toList();
+  }
+
+  Future<List<ActivityApiModel>> getUserActivities(String userId) async {
+    final query = await _userActivities(
+      userId,
+    ).orderBy('createdAt', descending: true).get();
+
+    return query.docs
+        .map(
+          (doc) => ActivityApiModel.fromJson(doc.data()).copyWith(id: doc.id),
+        )
+        .toList();
+  }
+
+  /// Get user activities with optional limit and pagination by lastActivityId
+  Future<List<ActivityApiModel>> getUserActivitiesLimit(
+    String userId, {
+    int? limit,
+    String? lastActivityId,
+  }) async {
+    var collection = _userActivities(
+      userId,
+    ).orderBy('createdAt', descending: true);
+
+    if (limit != null) {
+      collection = collection.limit(limit);
+    }
+
+    if (lastActivityId != null && lastActivityId.isNotEmpty) {
+      final lastDoc = await _userActivities(userId).doc(lastActivityId).get();
+      if (lastDoc.exists) {
+        collection = collection.startAfterDocument(lastDoc);
+      }
+    }
+
+    final querySnapshot = await collection.get();
+
+    return querySnapshot.docs
+        .map(
+          (doc) => ActivityApiModel.fromJson(doc.data()).copyWith(id: doc.id),
+        )
+        .toList();
+  }
+
+  /// Save or update a user activity at /user/{userId}/activities/{activityId}
+  Future<void> saveUserActivity(
+    String userId,
+    ActivityApiModel activity,
+  ) async {
+    try {
+      var model = activity;
+      if (model.id == null || model.id!.isEmpty) {
+        model = model.copyWith(id: generateFirestoreId());
+      }
+
+      final docRef = _userActivities(userId).doc(model.id);
+      final data = model.toJson();
+      data['createdAt'] = FieldValue.serverTimestamp();
+
+      await docRef.set(data, SetOptions(merge: true));
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Delete a user activity at /user/{userId}/activities/{activityId}
+  Future<void> deleteActivity(String userId, String activityId) async {
+    await _userActivities(userId).doc(activityId).delete();
+  }
+
+  /// Delete a user activity by relatedId at /user/{userId}/activities/{activityId}
+  Future<void> deleteActivityByRelatedId(
+    String userId,
+    String type,
+    String relatedId,
+  ) async {
+    final query = await _userActivities(userId)
+        .where('type', isEqualTo: type)
+        .where('relatedId', isEqualTo: relatedId)
+        .get();
+
+    for (final doc in query.docs) {
+      await doc.reference.delete();
+    }
   }
 
   /// Save or update user profile data at /users/{uid}

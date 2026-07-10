@@ -1,5 +1,8 @@
+import 'package:emombti/app_state/auth.dart';
+import 'package:emombti/data/repositories/activity/activity_repository.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
+import 'package:emombti/domain/models/activity/activity.dart';
 import 'package:emombti/domain/models/feed/feed.dart';
 import 'package:emombti/domain/models/user/user.dart';
 import 'package:emombti/utils/command.dart';
@@ -12,10 +15,15 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
     required this.feedPostId,
     required FeedRepository feedRepository,
     required UserRepository userRepository,
+    required ActivityRepository activityRepository,
+    required AuthState authState,
   }) : _feedRepository = feedRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _activityRepository = activityRepository,
+       _authState = authState {
     loadPostCommand = Command0<Post?>(_loadPost);
     loadSocialCommand = Command0<SocialMeta>(_loadSocial);
+    deletePostCommand = Command1<void, String>(_deletePost);
     commentController = CommentController();
     actionsController = ActionsController(socialMeta: SocialMeta(id: '123'));
   }
@@ -23,6 +31,10 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
   final String feedPostId;
   final FeedRepository _feedRepository;
   final UserRepository _userRepository;
+  final ActivityRepository _activityRepository;
+  final AuthState _authState;
+
+  String? get currentUserId => _authState.userId;
 
   Post? _post;
   Post? get post => _post;
@@ -30,6 +42,8 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
   late final Command0<Post?> loadPostCommand;
 
   late final Command0<SocialMeta> loadSocialCommand;
+
+  late final Command1<void, String> deletePostCommand;
 
   late final CommentController commentController;
 
@@ -79,6 +93,18 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
     return Result.ok(data);
   }
 
+  Future<Result<void>> _deletePost(String postId) async {
+    final userId = _authState.userId;
+    if (userId == null) {
+      return Result.error(Exception('User not logged in'));
+    }
+    return await _activityRepository.deleteByRelatedId(
+      userId,
+      ActivityType.post,
+      postId,
+    );
+  }
+
   Future<Post> _loadAuthor(Post post) async {
     final authorId = post.author.id;
     if (authorId == null || authorId.isEmpty) return post;
@@ -93,3 +119,4 @@ class FeedPostDetailViewmodel extends ChangeNotifier {
     return post;
   }
 }
+

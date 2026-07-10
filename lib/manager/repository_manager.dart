@@ -1,3 +1,5 @@
+import 'package:emombti/data/repositories/activity/activity_repository.dart';
+import 'package:emombti/data/repositories/activity/activity_repository_firestore.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/auth/auth_repository_firebase.dart';
 import 'package:emombti/data/repositories/chat/chat_repository.dart';
@@ -16,6 +18,7 @@ import 'package:emombti/manager/storage_manager.dart';
 import 'package:flutter/foundation.dart';
 
 class RepositoryManager extends ChangeNotifier {
+  late final ActivityRepository activityRepository;
   late final AuthRepository authRepository;
   late final UserRepository userRepository;
   late final ChatRepository chatRepository;
@@ -28,6 +31,9 @@ class RepositoryManager extends ChangeNotifier {
     // Async Typed Repository.
     authRepository = AuthRepositoryFirebase(
       apiStroage: storageManager.firestoreService,
+    );
+    activityRepository = ActivityRepositoryFirestore(
+      firestoreService: storageManager.firestoreService,
     );
     quizRepository = QuizRepositoryDev(
       localStorage: storageManager.localStorage,

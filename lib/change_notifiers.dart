@@ -1,3 +1,4 @@
+import 'package:emombti/data/repositories/activity/activity_repository.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/chat/chat_repository.dart';
 import 'package:emombti/data/repositories/content/content_repository.dart';
@@ -59,6 +60,9 @@ class MainAppChangeNotifers extends StatelessWidget {
               child: Consumer<RepositoryManager>(
                 builder: (context, value, _) => MultiProvider(
                   providers: [
+                    Provider<ActivityRepository>.value(
+                      value: repositoryManager.activityRepository,
+                    ),
                     Provider<AuthRepository>.value(
                       value: repositoryManager.authRepository,
                     ),

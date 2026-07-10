@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/services/persistence/api/file_service.dart';
 import 'package:emombti/data/services/persistence/api/firestore_service.dart';
+import 'package:emombti/data/services/persistence/api/model/activity/activity_api_model.dart';
 import 'package:emombti/data/services/persistence/api/model/feed/feed_api_model.dart';
 import 'package:emombti/domain/models/common/common.dart';
 import 'package:emombti/domain/models/feed/feed.dart';
@@ -24,6 +25,25 @@ class FeedRepositoryFirestore extends FeedRepository {
     DateTime now = DateTime.now();
     post = post.copyWith(id: Uuid().v4(), created: now, updated: now);
     await firestoreService.savePost(_mapPostDomainToApiModel(post));
+
+    // Save user activity for the created post
+    final userId = post.author.id;
+    if (userId != null && userId.isNotEmpty) {
+      await firestoreService.saveUserActivity(
+        userId,
+        ActivityApiModel(
+          title: post.title ?? 'New Post',
+          description: post.body,
+          relatedId: post.id,
+          type: 'post',
+          thumbnailUrl: post.photos.isNotEmpty
+              ? post.photos.first.uri.toString()
+              : null,
+          createdAt: now,
+        ),
+      );
+    }
+
     return Result.ok(post);
   }
 
@@ -71,6 +91,23 @@ class FeedRepositoryFirestore extends FeedRepository {
     DateTime now = DateTime.now();
     reel = reel.copyWith(id: Uuid().v4(), created: now, updated: now);
     await firestoreService.saveReel(_mapReelDomainToApiModel(reel));
+
+    // Save user activity for the created reel
+    final userId = reel.author.id;
+    if (userId != null && userId.isNotEmpty) {
+      await firestoreService.saveUserActivity(
+        userId,
+        ActivityApiModel(
+          title: reel.title ?? 'New Reel',
+          description: reel.subTitle,
+          relatedId: reel.id,
+          type: 'reel',
+          thumbnailUrl: reel.videoUrl.uri.toString(),
+          createdAt: now,
+        ),
+      );
+    }
+
     return Result.ok(reel);
   }
 

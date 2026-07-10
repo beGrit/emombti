@@ -84,7 +84,8 @@ GoRouter router(AuthState authState) => GoRouter(
       path: Routes.meStandalone,
       builder: (context, state) => MeScreen(
         showBackButton: true,
-        viewModel: MeViewModel(
+        viewModel: MeScreenViewModel(
+          context.read(),
           context.read(),
           context.read(),
           context.read(),
@@ -98,7 +99,8 @@ GoRouter router(AuthState authState) => GoRouter(
       path: Routes.meBackground,
       builder: (context, state) {
         return MeBackgroundPicker(
-          viewModel: MeViewModel(
+          viewModel: MeScreenViewModel(
+            context.read(),
             context.read(),
             context.read(),
             context.read(),
@@ -215,6 +217,8 @@ GoRouter router(AuthState authState) => GoRouter(
               feedPostId: postId,
               feedRepository: context.read(),
               userRepository: context.read(),
+              activityRepository: context.read(),
+              authState: context.read(),
             );
             viewModel.loadPostCommand.execute();
             viewModel.loadSocialCommand.execute();
@@ -321,7 +325,8 @@ GoRouter router(AuthState authState) => GoRouter(
             GoRoute(
               path: Routes.me,
               builder: (context, state) => MeScreen(
-                viewModel: MeViewModel(
+                viewModel: MeScreenViewModel(
+                  context.read(),
                   context.read(),
                   context.read(),
                   context.read(),

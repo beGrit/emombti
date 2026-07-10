@@ -6,7 +6,7 @@ import '../view_models/me_screen_viewmodel.dart';
 class MeScreenAvatar extends StatelessWidget {
   const MeScreenAvatar({super.key, required this.viewModel});
 
-  final MeViewModel viewModel;
+  final MeScreenViewModel viewModel;
 
   Future<void> _onAvatarTap(BuildContext context) async {
     await viewModel.pickAndUploadAvatarCommand.execute();
