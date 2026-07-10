@@ -169,9 +169,9 @@ class _LoginFormState extends State<LoginForm> {
 
     if (widget.viewModel.register.completed) {
       widget.viewModel.register.clearResult();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Created Successfully.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Successfully.')),
+      );
     }
 
     if (widget.viewModel.register.error) {
@@ -185,28 +185,37 @@ class _LoginFormState extends State<LoginForm> {
   void _showRegisterConfirmDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Account Not Found'),
-        content: const Text(
-          'Would you like to create a new account with this email and password?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
-              widget.viewModel.register.execute((
-                _emailController.text,
-                _passwordController.text,
-              ));
-            },
-            child: const Text('Create Account'),
-          ),
-        ],
-      ),
+      builder: (context) {
+        return ListenableBuilder(
+          listenable: widget.viewModel.register,
+          builder: (context, child) {
+            if (widget.viewModel.register.running) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return AlertDialog(
+              title: const Text('Login failed'),
+              content: const Text(
+                'Would you like to create a new account with this email and password?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    widget.viewModel.register.execute((
+                      _emailController.text,
+                      _passwordController.text,
+                    ));
+                  },
+                  child: const Text('Create Account'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

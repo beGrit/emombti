@@ -139,17 +139,21 @@ class UserRepositoryDev implements UserRepository {
     List<int> bytes,
     String filename,
   ) async {
-    String objectName = 'users/avatar/$filename';
-    await _fileService.saveFile(objectName, bytes, filename);
-    Uri uri = _fileService.getUri(objectName);
-    UserFirestoreApiModel apiModel = await _firestore.saveUser(
-      UserFirestoreApiModel(
-        id: id,
-        avatar: uri.toString(),
-        updated: DateTime.now(),
-      ),
-    );
-    return Result.ok(_mapUserApiModelToDomain(apiModel));
+    try {
+      String objectName = 'users/avatar/$filename';
+      await _fileService.saveFile(objectName, bytes, filename);
+      Uri uri = _fileService.getUri(objectName);
+      UserFirestoreApiModel apiModel = await _firestore.saveUser(
+        UserFirestoreApiModel(
+          id: id,
+          avatar: uri.toString(),
+          updated: DateTime.now(),
+        ),
+      );
+      return Result.ok(_mapUserApiModelToDomain(apiModel));
+    } catch (e) {
+      return Result.error(Exception('Failed to updateAvatar.'));
+    }
   }
 
   User _mapUserApiModelToDomain(UserFirestoreApiModel apiModel) {

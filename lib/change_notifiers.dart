@@ -83,7 +83,7 @@ class MainAppChangeNotifers extends StatelessWidget {
                     Provider<UserAvatarUpdateUseCase>(
                       lazy: true,
                       create: (context) => UserAvatarUpdateUseCase(
-                        userRepository: context.read<UserRepository>(),
+                        userRepository: repositoryManager.userRepository,
                       ),
                     ),
                   ],

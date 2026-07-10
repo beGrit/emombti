@@ -9,6 +9,11 @@ abstract class AuthRepository {
   /// Perform login
   Future<Result<User>> login({required String email, required String password});
 
+  Future<Result<User>> register({
+    required String email,
+    required String password,
+  });
+
   Future<Result<User>> loginWithWechat();
 
   Future<Result<User>> loginWithGoogle();

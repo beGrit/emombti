@@ -16,33 +16,35 @@ class MeViewModel extends ChangeNotifier {
     this._userAvatarUpdateUseCase,
   ) {
     _authState.addListener(_onAuthStateChanged);
-    pickAndUploadAvatarCommand = Command0<void>(pickAndUploadBackgroundImg);
+    pickAndUploadAvatarCommand = Command0<User>(pickAndUploadAvatar);
+    pickAndUploadBackgoundImgCommand = Command0<User>(
+      _pickAndUploadBackgroundImg,
+    );
   }
 
   final AuthRepository _authRepository;
   final UserRepository _userRepository;
   final AuthState _authState;
   final UserAvatarUpdateUseCase _userAvatarUpdateUseCase;
-  late final Command0<void> pickAndUploadAvatarCommand;
+  late final Command0<User> pickAndUploadAvatarCommand;
+  late final Command0<User> pickAndUploadBackgoundImgCommand;
 
   User? get user => _authState.user;
-  bool get isUpdatingAvatar => _userAvatarUpdateUseCase.isUpdatingAvatar;
 
-  Future<Result> pickAndUploadAvatar() async {
-    Future<Result<User>> result = _userAvatarUpdateUseCase.pickAndUploadAvatar(
+  Future<Result<User>> pickAndUploadAvatar() async {
+    Result<User> result = await _userAvatarUpdateUseCase.pickAndUploadAvatar(
       user?.id ?? '',
       ImagePicker(),
     );
-    result.then(
-      (value) => {
-        if (value is Ok<User>)
-          {_authState.updateAuthenticatedUser(value.value), notifyListeners()},
-      },
-    );
+    if (result is Ok<User>) {
+      _authState.updateAuthenticatedUser(
+        user?.copyWith(avatar: result.value.avatar),
+      );
+    }
     return result;
   }
 
-  Future<Result> pickAndUploadBackgroundImg() async {
+  Future<Result<User>> _pickAndUploadBackgroundImg() async {
     ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
@@ -54,22 +56,16 @@ class MeViewModel extends ChangeNotifier {
       return Result.error(Exception('No image selected'));
     }
     final bytes = await image.readAsBytes();
-    Future<Result<User>> result = _userRepository.updateBackgroundImg(
+    Result<User> result = await _userRepository.updateBackgroundImg(
       user?.id ?? '',
       bytes,
       image.name,
     );
-    result.then(
-      (value) => {
-        if (value is Ok<User>)
-          {
-            _authState.updateAuthenticatedUser(
-              user?.copyWith(backgroundImg: value.value.backgroundImg),
-            ),
-            notifyListeners(),
-          },
-      },
-    );
+    if (result is Ok<User>) {
+      _authState.updateAuthenticatedUser(
+        user?.copyWith(backgroundImg: result.value.backgroundImg),
+      );
+    }
     return result;
   }
 

@@ -11,7 +11,7 @@ import 'package:emombti/data/repositories/quiz/quiz_repository_dev.dart';
 import 'package:emombti/data/repositories/social/social_repository.dart';
 import 'package:emombti/data/repositories/social/social_repository_firestore.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
-import 'package:emombti/data/repositories/user/user_repository_dev_v2.dart';
+import 'package:emombti/data/repositories/user/user_repository_dev.dart';
 import 'package:emombti/manager/storage_manager.dart';
 import 'package:flutter/foundation.dart';
 

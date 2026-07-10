@@ -7,6 +7,7 @@ import 'package:emombti/data/services/persistence/api/model/user/user_api_model.
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logging/logging.dart';
 
 import '../../../domain/models/common/common.dart';
 import '../../../domain/models/user/user.dart';
@@ -24,6 +25,7 @@ class AuthRepositoryFirebase extends AuthRepository {
     _apiStroage = apiStroage;
   }
 
+  final _log = Logger('AuthRepositoryFirebase');
   late final fb.FirebaseAuth _firebaseAuth;
   late final GoogleSignIn _googleSignIn;
   late final FirestoreService _apiStroage;
@@ -89,6 +91,7 @@ class AuthRepositoryFirebase extends AuthRepository {
         return Result.error(Exception('Failed to get user after login'));
       }
     } on fb.FirebaseAuthException catch (e) {
+      _log.info(e.message);
       return Result.error(e);
     } catch (e) {
       return Result.error(Exception(e.toString()));
@@ -178,5 +181,24 @@ class AuthRepositoryFirebase extends AuthRepository {
       }
     }
     return Result.error(Exception('No authenticated user'));
+  }
+
+  @override
+  Future<Result<User>> register({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      fb.UserCredential userCredential = await _firebaseAuth
+          .createUserWithEmailAndPassword(email: email, password: password);
+      final user = await _initUser(userCredential.user);
+      if (user != null) {
+        return Result.ok(user);
+      } else {
+        return Result.error(Exception('Failed to register.'));
+      }
+    } catch (e) {
+      return Result.error(Exception('Failed to register.'));
+    }
   }
 }

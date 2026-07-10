@@ -59,17 +59,19 @@ class LoginViewModel extends ChangeNotifier {
     final (email, password) = credentials;
     _log.info('Attempting to register user: $email');
 
-    final createResult = await userRepository.createUserUsingEmailPassword(
-      email: email,
-      password: password,
-    );
+    final result = await repository.register(email: email, password: password);
 
-    if (createResult is Error<void>) {
-      _log.severe('Failed to create user: ${createResult.error}');
+    if (result is Ok<User>) {
+      _log.info('Successfully logged in');
+      authState.updateAuthenticatedUser(result.value);
+    } else if (result is Error<User>) {
+      _log.severe('Failed to create user: ${result.error}');
     }
 
+    notifyListeners();
+
     // 2. Log in with the newly created credentials
-    return createResult;
+    return result;
   }
 
   Future<Result<void>> _loginWithAppleIdAction() async {

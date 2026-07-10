@@ -16,9 +16,9 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseAppCheck.instance.activate(
-    providerAndroid: kDebugMode
-        ? AndroidDebugProvider()
-        : AndroidPlayIntegrityProvider(),
+    providerAndroid: AndroidDebugProvider(
+      debugToken: '6A7E394A-FB4D-4FE7-9BC0-D00FFDEF5D70',
+    ),
     providerApple: kDebugMode ? AppleDebugProvider() : AppleAppAttestProvider(),
     providerWeb: kDebugMode ? WebDebugProvider() : WebReCaptchaProvider(),
   );

@@ -14,7 +14,7 @@ class MeBackgroundPickerState extends State<MeBackgroundPicker> {
   @override
   void initState() {
     super.initState();
-    widget.viewModel.pickAndUploadAvatarCommand.addListener(
+    widget.viewModel.pickAndUploadBackgoundImgCommand.addListener(
       _onPickAndUploadAvatarCommandChanged,
     );
   }
@@ -22,7 +22,7 @@ class MeBackgroundPickerState extends State<MeBackgroundPicker> {
   void _onPickAndUploadAvatarCommandChanged() {
     if (mounted) {
       final messenger = ScaffoldMessenger.of(context);
-      if (widget.viewModel.pickAndUploadAvatarCommand.error) {
+      if (widget.viewModel.pickAndUploadBackgoundImgCommand.error) {
         messenger.clearSnackBars();
         messenger.hideCurrentMaterialBanner();
         messenger.showSnackBar(
@@ -33,7 +33,7 @@ class MeBackgroundPickerState extends State<MeBackgroundPicker> {
           ),
         );
       }
-      if (widget.viewModel.pickAndUploadAvatarCommand.completed) {
+      if (widget.viewModel.pickAndUploadBackgoundImgCommand.completed) {
         messenger.clearSnackBars();
         messenger.hideCurrentMaterialBanner();
         messenger.showSnackBar(
@@ -57,9 +57,9 @@ class MeBackgroundPickerState extends State<MeBackgroundPicker> {
         leading: CloseButton(color: theme.colorScheme.onSurface),
       ),
       body: ListenableBuilder(
-        listenable: widget.viewModel.pickAndUploadAvatarCommand,
+        listenable: widget.viewModel.pickAndUploadBackgoundImgCommand,
         builder: (context, child) {
-          if (widget.viewModel.pickAndUploadAvatarCommand.running) {
+          if (widget.viewModel.pickAndUploadBackgoundImgCommand.running) {
             return const Center(child: CircularProgressIndicator());
           }
           return Column(
@@ -94,7 +94,7 @@ class MeBackgroundPickerState extends State<MeBackgroundPicker> {
               ),
               FilledButton(
                 onPressed: () {
-                  widget.viewModel.pickAndUploadAvatarCommand.execute();
+                  widget.viewModel.pickAndUploadBackgoundImgCommand.execute();
                 },
                 child: const Text('Set as Background'),
               ),
