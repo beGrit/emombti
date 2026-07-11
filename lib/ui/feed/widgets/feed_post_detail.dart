@@ -89,36 +89,58 @@ class _FeedPostDetailState extends State<FeedPostDetail> {
                   post.author.id != widget.viewModel.currentUserId) {
                 return const SizedBox.shrink();
               }
-              return IconButton(
-                onPressed: () async {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Delete Post'),
-                      content: const Text(
-                        'Are you sure you want to delete this post? This action cannot be undone.',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => context.pop(false),
-                          child: const Text('Cancel'),
-                        ),
-                        FilledButton(
-                          onPressed: () => context.pop(true),
-                          child: const Text('Delete'),
-                        ),
-                      ],
-                    ),
-                  );
+              return ListenableBuilder(
+                listenable: widget.viewModel.deletePostCommand,
+                builder: (context, _) {
+                  final command = widget.viewModel.deletePostCommand;
 
-                  if (confirmed == true && mounted) {
-                    await widget.viewModel.deletePostCommand.execute(post.id!);
-                    if (mounted) {
-                      context.pop();
-                    }
+                  if (command.completed) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        context.pop();
+                      }
+                    });
                   }
+
+                  return IconButton(
+                    onPressed: command.running
+                        ? null
+                        : () async {
+                            final confirmed = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Delete Post'),
+                                content: const Text(
+                                  'Are you sure you want to delete this post? This action cannot be undone.',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => context.pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  FilledButton(
+                                    onPressed: () => context.pop(true),
+                                    child: const Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirmed == true && mounted) {
+                              widget.viewModel.deletePostCommand.execute(
+                                post.id!,
+                              );
+                            }
+                          },
+                    icon: command.running
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.delete_outline),
+                  );
                 },
-                icon: const Icon(Icons.delete_outline),
               );
             },
           ),

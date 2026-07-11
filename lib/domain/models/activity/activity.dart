@@ -20,3 +20,13 @@ abstract class Activity with _$Activity {
   factory Activity.fromJson(Map<String, dynamic> json) =>
       _$ActivityFromJson(json);
 }
+
+enum ActivityEventType { delete, add }
+
+@freezed
+abstract class ActivityEvent with _$ActivityEvent {
+  const factory ActivityEvent({
+    required ActivityEventType eventType,
+    required String activityId,
+  }) = _ActivityEvent;
+}

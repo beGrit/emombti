@@ -4,6 +4,7 @@ import 'package:emombti/data/services/persistence/api/file_service.dart';
 import 'package:emombti/data/services/persistence/api/firestore_service.dart';
 import 'package:emombti/data/services/persistence/api/model/activity/activity_api_model.dart';
 import 'package:emombti/data/services/persistence/api/model/feed/feed_api_model.dart';
+import 'package:emombti/domain/models/activity/activity.dart';
 import 'package:emombti/domain/models/common/common.dart';
 import 'package:emombti/domain/models/feed/feed.dart';
 import 'package:emombti/domain/models/user/user.dart';
@@ -54,6 +55,20 @@ class FeedRepositoryFirestore extends FeedRepository {
       return Result.error(Exception('Post not found.'));
     } else {
       return Result.ok(_mapPostApiModelToDomain(apiModel));
+    }
+  }
+
+  @override
+  Future<Result<void>> deletePostById(String userId, String postId) async {
+    try {
+      await firestoreService.deleteFeedAndActivity(
+        feedId: postId,
+        userId: userId,
+        type: ActivityType.post.name,
+      );
+      return Result.ok(null);
+    } catch (e) {
+      return Result.error(Exception(e));
     }
   }
 

@@ -292,4 +292,264 @@ as DateTime,
 
 }
 
+/// @nodoc
+mixin _$ActivityEvent {
+
+ ActivityEventType get eventType; String get activityId;
+/// Create a copy of ActivityEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ActivityEventCopyWith<ActivityEvent> get copyWith => _$ActivityEventCopyWithImpl<ActivityEvent>(this as ActivityEvent, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ActivityEvent&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.activityId, activityId) || other.activityId == activityId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,eventType,activityId);
+
+@override
+String toString() {
+  return 'ActivityEvent(eventType: $eventType, activityId: $activityId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ActivityEventCopyWith<$Res>  {
+  factory $ActivityEventCopyWith(ActivityEvent value, $Res Function(ActivityEvent) _then) = _$ActivityEventCopyWithImpl;
+@useResult
+$Res call({
+ ActivityEventType eventType, String activityId
+});
+
+
+
+
+}
+/// @nodoc
+class _$ActivityEventCopyWithImpl<$Res>
+    implements $ActivityEventCopyWith<$Res> {
+  _$ActivityEventCopyWithImpl(this._self, this._then);
+
+  final ActivityEvent _self;
+  final $Res Function(ActivityEvent) _then;
+
+/// Create a copy of ActivityEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? eventType = null,Object? activityId = null,}) {
+  return _then(_self.copyWith(
+eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
+as ActivityEventType,activityId: null == activityId ? _self.activityId : activityId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ActivityEvent].
+extension ActivityEventPatterns on ActivityEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ActivityEvent value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ActivityEvent() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ActivityEvent value)  $default,){
+final _that = this;
+switch (_that) {
+case _ActivityEvent():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ActivityEvent value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ActivityEvent() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ActivityEventType eventType,  String activityId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ActivityEvent() when $default != null:
+return $default(_that.eventType,_that.activityId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ActivityEventType eventType,  String activityId)  $default,) {final _that = this;
+switch (_that) {
+case _ActivityEvent():
+return $default(_that.eventType,_that.activityId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ActivityEventType eventType,  String activityId)?  $default,) {final _that = this;
+switch (_that) {
+case _ActivityEvent() when $default != null:
+return $default(_that.eventType,_that.activityId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ActivityEvent implements ActivityEvent {
+  const _ActivityEvent({required this.eventType, required this.activityId});
+  
+
+@override final  ActivityEventType eventType;
+@override final  String activityId;
+
+/// Create a copy of ActivityEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ActivityEventCopyWith<_ActivityEvent> get copyWith => __$ActivityEventCopyWithImpl<_ActivityEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ActivityEvent&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.activityId, activityId) || other.activityId == activityId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,eventType,activityId);
+
+@override
+String toString() {
+  return 'ActivityEvent(eventType: $eventType, activityId: $activityId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ActivityEventCopyWith<$Res> implements $ActivityEventCopyWith<$Res> {
+  factory _$ActivityEventCopyWith(_ActivityEvent value, $Res Function(_ActivityEvent) _then) = __$ActivityEventCopyWithImpl;
+@override @useResult
+$Res call({
+ ActivityEventType eventType, String activityId
+});
+
+
+
+
+}
+/// @nodoc
+class __$ActivityEventCopyWithImpl<$Res>
+    implements _$ActivityEventCopyWith<$Res> {
+  __$ActivityEventCopyWithImpl(this._self, this._then);
+
+  final _ActivityEvent _self;
+  final $Res Function(_ActivityEvent) _then;
+
+/// Create a copy of ActivityEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? eventType = null,Object? activityId = null,}) {
+  return _then(_ActivityEvent(
+eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
+as ActivityEventType,activityId: null == activityId ? _self.activityId : activityId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 // dart format on

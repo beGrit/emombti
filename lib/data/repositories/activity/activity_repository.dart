@@ -4,7 +4,7 @@ import 'package:emombti/utils/result.dart';
 abstract class ActivityRepository {
   Future<Result<List<Activity>>> getActivities(String userId);
   Future<Result<Activity>> saveActivity(String userId, Activity activity);
-  Future<Result<void>> deleteActivity(String userId, String activityId);
+  Future<Result<void>> deleteActivity(String userId, Activity activity);
   Future<Result<List<Activity>>> getActivitiesLimit(
     String userId,
     int limit, {
@@ -16,4 +16,3 @@ abstract class ActivityRepository {
     String relatedId,
   );
 }
-

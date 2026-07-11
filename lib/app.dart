@@ -1,12 +1,12 @@
 import 'package:emombti/app_state/app_config.dart';
 import 'package:emombti/app_state/auth.dart';
 import 'package:emombti/app_state/theme.dart';
-import 'package:emombti/change_notifiers.dart';
 import 'package:emombti/manager/app_state_manager.dart';
 import 'package:emombti/manager/connectivity_manager.dart';
 import 'package:emombti/manager/repository_manager.dart';
 import 'package:emombti/manager/storage_manager.dart';
 import 'package:emombti/manager/sync_manager.dart';
+import 'package:emombti/providers.dart';
 import 'package:emombti/routing/router.dart';
 import 'package:emombti/ui/core/ui/widgets/notification.dart';
 import 'package:flutter/material.dart';
@@ -45,8 +45,9 @@ class MainApp extends StatefulWidget {
       repositoryManager: repositoryManager,
       syncManager: syncManager,
     );
+
     runApp(
-      MainAppChangeNotifers(
+      MainAppProviders(
         storageManager: storageManager,
         repositoryManager: repositoryManager,
         appStateManager: appStateManager,

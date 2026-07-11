@@ -11,6 +11,9 @@ abstract class FeedRepository {
 
   Future<Result<Post>> getPostById(String id);
 
+  /// Deletes a post by ID.
+  Future<Result<void>> deletePostById(String userId, String postId);
+
   Future<Result<List<Reel>>> getReelsLimit(
     int? limit,
     String? reelId,

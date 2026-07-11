@@ -89,9 +89,16 @@ class ActivityRepositoryFirestore implements ActivityRepository {
   }
 
   @override
-  Future<Result<void>> deleteActivity(String userId, String activityId) async {
+  Future<Result<void>> deleteActivity(String userId, Activity activity) async {
     try {
-      await _firestoreService.deleteActivity(userId, activityId);
+      if (activity.relatedId == null) {
+        return Result.error(Exception('Activity not exists.'));
+      }
+      await _firestoreService.deleteFeedAndActivity(
+        feedId: activity.relatedId ?? '',
+        userId: userId,
+        type: activity.type.name,
+      );
       return const Result.ok(null);
     } catch (e) {
       return Result.error(Exception('Failed to delete activity.'));
@@ -105,10 +112,10 @@ class ActivityRepositoryFirestore implements ActivityRepository {
     String relatedId,
   ) async {
     try {
-      await _firestoreService.deleteActivityByRelatedId(
-        userId,
-        activityType.name,
-        relatedId,
+      await _firestoreService.deleteFeedAndActivity(
+        feedId: relatedId,
+        userId: userId,
+        type: activityType.name,
       );
       return Result.ok(null);
     } catch (e) {

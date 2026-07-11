@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:emombti/app_state/user_activity.dart';
 import 'package:emombti/domain/models/activity/activity.dart';
 import 'package:emombti/routing/routes.dart';
 import 'package:emombti/ui/me/view_models/me_screen_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class MeScreenActivityList extends StatefulWidget {
   final MeScreenViewModel viewModel;
@@ -14,7 +16,7 @@ class MeScreenActivityList extends StatefulWidget {
 }
 
 class _MeScreenActivityListState extends State<MeScreenActivityList> {
-  String _selectedTab = 'Posts';
+  String _selectedTab = '';
 
   @override
   void initState() {
@@ -22,212 +24,177 @@ class _MeScreenActivityListState extends State<MeScreenActivityList> {
     widget.viewModel.loadActivity.execute();
   }
 
-  List<Activity> get _filteredActivities {
-    final activities = widget.viewModel.activities;
-    switch (_selectedTab) {
-      case 'Videos':
-        return activities
-            .where((activity) => activity.type == ActivityType.video)
-            .toList();
-      case 'Popular':
-        return activities
-            .where((activity) => activity.type == ActivityType.popular)
-            .toList();
-      case 'Posts':
-      default:
-        return activities
-            .where((activity) => activity.type == ActivityType.post)
-            .toList();
-    }
+  void _handleOnSelectedTab(Set<String> newSelection) {
+    if (newSelection.isEmpty) return;
+    setState(() {
+      _selectedTab = newSelection.first;
+    });
+    widget.viewModel.loadActivity.execute();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return ListenableBuilder(
-      listenable: Listenable.merge([
-        widget.viewModel,
-        widget.viewModel.loadActivity,
-      ]),
-      builder: (context, _) {
-        final activities = _filteredActivities;
-        final isLoading =
-            widget.viewModel.loadActivity.running &&
-            widget.viewModel.activities.isEmpty;
-        final hasError =
-            widget.viewModel.loadActivity.error &&
-            widget.viewModel.activities.isEmpty;
+    return Consumer<UserActivityNotifier>(
+      builder: (context, userActivityNotifier, child) => ListenableBuilder(
+        listenable: Listenable.merge([
+          widget.viewModel,
+          widget.viewModel.loadActivity,
+        ]),
+        builder: (context, _) {
+          final activities = userActivityNotifier.value.items;
+          final isLoading = widget.viewModel.loadActivity.running;
+          final hasError = widget.viewModel.loadActivity.error;
 
-        return SliverMainAxisGroup(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
-                child: SegmentedButton<String>(
-                  segments: const <ButtonSegment<String>>[
-                    ButtonSegment<String>(
-                      value: 'Posts',
-                      label: Text('Posts'),
-                      icon: Icon(Icons.article_outlined, size: 18),
-                    ),
-                    ButtonSegment<String>(
-                      value: 'Videos',
-                      label: Text('Videos'),
-                      icon: Icon(Icons.videocam_outlined, size: 18),
-                    ),
-                    ButtonSegment<String>(
-                      value: 'Popular',
-                      label: Text('Popular'),
-                      icon: Icon(
-                        Icons.local_fire_department_outlined,
-                        size: 18,
+          return SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0),
+                  child: SegmentedButton<String>(
+                    segments: const <ButtonSegment<String>>[
+                      ButtonSegment<String>(
+                        value: 'Posts',
+                        label: Text('Posts'),
+                        icon: Icon(Icons.article_outlined, size: 18),
                       ),
+                      ButtonSegment<String>(
+                        value: 'Videos',
+                        label: Text('Videos'),
+                        icon: Icon(Icons.videocam_outlined, size: 18),
+                      ),
+                      ButtonSegment<String>(
+                        value: 'Popular',
+                        label: Text('Popular'),
+                        icon: Icon(
+                          Icons.local_fire_department_outlined,
+                          size: 18,
+                        ),
+                      ),
+                    ],
+                    emptySelectionAllowed: true,
+                    selected: _selectedTab.isNotEmpty ? {_selectedTab} : {},
+                    onSelectionChanged: _handleOnSelectedTab,
+                    style: SegmentedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
                     ),
-                  ],
-                  selected: {_selectedTab},
-                  onSelectionChanged: (Set<String> newSelection) {
-                    if (newSelection.isEmpty) return;
-                    setState(() {
-                      _selectedTab = newSelection.first;
-                    });
-                  },
-                  style: SegmentedButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
                   ),
                 ),
               ),
-            ),
-            if (isLoading)
-              const SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (hasError)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          color: theme.colorScheme.error,
-                          size: 36,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'Failed to load activities.',
-                          style: theme.textTheme.titleMedium,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+              if (isLoading)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (hasError)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.error_outline,
+                            color: theme.colorScheme.error,
+                            size: 36,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Failed to load activities.',
+                            style: theme.textTheme.titleMedium,
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )
-            else if (activities.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      'No $_selectedTab activity yet.',
-                      style: theme.textTheme.bodyLarge,
-                      textAlign: TextAlign.center,
+                )
+              else if (activities.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        'No $_selectedTab activity yet.',
+                        style: theme.textTheme.bodyLarge,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.all(16.0),
-                sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 0.85,
-                  ),
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    final activity = activities[index];
-                    return InkWell(
-                      onTap: () => _onActivityTap(context, activity),
-                      child: Container(
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surfaceContainerLow,
-                          borderRadius: BorderRadius.circular(12),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.all(16.0),
+                  sliver: SliverGrid(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 0.85,
                         ),
-                        child: Stack(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: _ActivityThumbnail(
-                                    activity: activity,
-                                    theme: theme,
-                                  ),
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final activity = activities[index];
+                      return InkWell(
+                        onTap: () => _onActivityTap(context, activity),
+                        child: Container(
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: _ActivityThumbnail(
+                                  activity: activity,
+                                  theme: theme,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      activity.title ?? 'Untitled',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.textTheme.bodyMedium,
+                                    ),
+                                    if (activity.description != null &&
+                                        activity.description!.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
                                       Text(
-                                        activity.title ?? 'Untitled',
+                                        activity.description!,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        style: theme.textTheme.bodyMedium,
-                                      ),
-                                      if (activity.description != null &&
-                                          activity.description!.isNotEmpty) ...[
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          activity.description!,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: theme.textTheme.bodySmall,
-                                        ),
-                                      ],
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        _formatDate(activity.createdAt),
-                                        style: theme.textTheme.labelSmall,
+                                        style: theme.textTheme.bodySmall,
                                       ),
                                     ],
-                                  ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      _formatDate(activity.createdAt),
+                                      style: theme.textTheme.labelSmall,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Positioned(
-                              top: 4,
-                              right: 4,
-                              child: IconButton(
-                                icon: const Icon(
-                                  Icons.delete_outline,
-                                  size: 20,
-                                ),
-                                onPressed: () {
-                                  widget.viewModel.deleteActivityCommand
-                                      .execute(activity.id);
-                                },
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  }, childCount: activities.length),
+                      );
+                    }, childCount: activities.length),
+                  ),
                 ),
-              ),
-          ],
-        );
-      },
+            ],
+          );
+        },
+      ),
     );
   }
 

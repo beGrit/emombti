@@ -9,6 +9,17 @@ enum RelationType { owner, history, share }
 
 enum FeedType { post, reel }
 
+enum FeedEventType { delete, add }
+
+@freezed
+abstract class FeedEvent with _$FeedEvent {
+  const factory FeedEvent({
+    required FeedEventType eventType,
+    required FeedType feedType,
+    required String feedId,
+  }) = _FeedEvent;
+}
+
 /// Model representing a Post
 /// Based on PocketBase posts collection schema
 @freezed
@@ -41,18 +52,4 @@ abstract class Reel with _$Reel {
   }) = _Reel;
 
   factory Reel.fromJson(Map<String, dynamic> json) => _$ReelFromJson(json);
-}
-
-@freezed
-abstract class FeedActivity with _$FeedActivity {
-  const factory FeedActivity({
-    String? id,
-    String? title,
-    String? body,
-    required String feedRel,
-    required RelationType relationType,
-    required FeedType feedType,
-    @Default([]) final List<String> mediaUrls,
-    required DateTime orderTime,
-  }) = _FeedActivity;
 }

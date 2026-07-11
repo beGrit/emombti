@@ -19,8 +19,8 @@ import 'package:emombti/ui/chat/view_models/chat_ai_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class MainAppChangeNotifers extends StatelessWidget {
-  const MainAppChangeNotifers({
+class MainAppProviders extends StatelessWidget {
+  const MainAppProviders({
     super.key,
     required this.child,
     required this.storageManager,
@@ -111,6 +111,15 @@ class MainAppChangeNotifers extends StatelessWidget {
                             ),
                             ChangeNotifierProvider.value(
                               value: appStateManager.chatState,
+                            ),
+                            ChangeNotifierProvider.value(
+                              value: appStateManager.userActivityNotifier,
+                            ),
+                            ChangeNotifierProvider.value(
+                              value: appStateManager.feedPostNotifier,
+                            ),
+                            ChangeNotifierProvider.value(
+                              value: appStateManager.feedReelNotifier,
                             ),
                             ChangeNotifierProvider<ChatAiViewModel>(
                               create: (context) => ChatAiViewModel(

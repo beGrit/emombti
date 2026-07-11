@@ -1,3 +1,4 @@
+import 'package:emombti/app_state/feed.dart';
 import 'package:emombti/domain/models/feed/feed.dart';
 import 'package:emombti/routing/routes.dart';
 import 'package:flutter/material.dart';
@@ -27,80 +28,85 @@ class FeedPostScreen extends StatelessWidget {
                   context.read<FeedPostViewModel>().loadPostsCommand.execute(),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: ListenableBuilder(
-                  listenable: Listenable.merge([
-                    viewModel.loadPostsCommand,
-                    viewModel.loadMorePostsCommand,
-                  ]),
-                  builder: (context, child) {
-                    return NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification scrollInfo) {
-                        // 1. Ensure we only listen to the primary scroll view, not nested ones
-                        if (scrollInfo.depth == 0) {
-                          final metrics = scrollInfo.metrics;
-                          if (metrics.pixels >= metrics.maxScrollExtent - 200 &&
-                              !viewModel.loadMorePostsCommand.running &&
-                              !viewModel.loadPostsCommand.running &&
-                              viewModel.posts.isNotEmpty &&
-                              viewModel.hasMore) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (context.mounted) {
-                                viewModel.loadMorePostsCommand.execute();
-                              }
-                            });
+                child: Consumer<FeedPostNotifier>(
+                  builder: (context, feedPostNotifier, child) => ListenableBuilder(
+                    listenable: Listenable.merge([
+                      viewModel.loadPostsCommand,
+                      viewModel.loadMorePostsCommand,
+                    ]),
+                    builder: (context, child) {
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scrollInfo) {
+                          // 1. Ensure we only listen to the primary scroll view, not nested ones
+                          if (scrollInfo.depth == 0) {
+                            final metrics = scrollInfo.metrics;
+                            if (metrics.pixels >=
+                                    metrics.maxScrollExtent - 200 &&
+                                !viewModel.loadMorePostsCommand.running &&
+                                !viewModel.loadPostsCommand.running &&
+                                feedPostNotifier.value.items.isNotEmpty &&
+                                viewModel.hasMore) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (context.mounted) {
+                                  viewModel.loadMorePostsCommand.execute();
+                                }
+                              });
+                            }
                           }
-                        }
-                        return false; // Allows the notification to bubble up if needed
-                      },
-                      child: CustomScrollView(
-                        key: const PageStorageKey('feed-post-page-view'),
-                        physics: const AlwaysScrollableScrollPhysics(
-                          parent: BouncingScrollPhysics(),
-                        ),
-                        slivers: [
-                          if (viewModel.loadPostsCommand.running &&
-                              viewModel.posts.isEmpty)
-                            const SliverFillRemaining(
-                              child: Center(child: Text('Refreshing')),
-                            )
-                          else if (viewModel.loadPostsCommand.error)
-                            const SliverFillRemaining(
-                              child: Center(child: Text('Error')),
-                            )
-                          else if (viewModel.posts.isEmpty)
-                            const SliverFillRemaining(
-                              child: Center(child: Text('No posts found')),
-                            )
-                          else
-                            SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (context, index) {
-                                  if (index < viewModel.posts.length) {
-                                    final post = viewModel.posts[index];
-                                    return _PostListTile(
-                                      post: post,
-                                      viewModel: viewModel,
-                                    );
-                                  } else {
-                                    return const Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 32.0,
-                                      ),
-                                      child: Center(
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    );
-                                  }
-                                },
-                                childCount:
-                                    viewModel.posts.length +
-                                    (viewModel.hasMore ? 1 : 0),
+                          return false; // Allows the notification to bubble up if needed
+                        },
+                        child: CustomScrollView(
+                          key: const PageStorageKey('feed-post-page-view'),
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
+                          ),
+                          slivers: [
+                            if (viewModel.loadPostsCommand.running &&
+                                feedPostNotifier.value.items.isEmpty)
+                              const SliverFillRemaining(
+                                child: Center(child: Text('Refreshing')),
+                              )
+                            else if (viewModel.loadPostsCommand.error)
+                              const SliverFillRemaining(
+                                child: Center(child: Text('Error')),
+                              )
+                            else if (feedPostNotifier.value.items.isEmpty)
+                              const SliverFillRemaining(
+                                child: Center(child: Text('No posts found')),
+                              )
+                            else
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    if (index <
+                                        feedPostNotifier.value.items.length) {
+                                      final post =
+                                          feedPostNotifier.value.items[index];
+                                      return _PostListTile(
+                                        post: post,
+                                        viewModel: viewModel,
+                                      );
+                                    } else {
+                                      return const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 32.0,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  childCount:
+                                      feedPostNotifier.value.items.length +
+                                      (viewModel.hasMore ? 1 : 0),
+                                ),
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

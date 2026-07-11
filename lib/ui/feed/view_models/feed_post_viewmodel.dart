@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:emombti/app_state/feed.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
@@ -13,19 +15,19 @@ import 'package:flutter_quill/flutter_quill.dart';
 class FeedPostViewModel extends ChangeNotifier {
   final FeedRepository _feedRepository;
   final UserRepository _userRepository;
+  final FeedPostNotifier _feedPostNotifier;
 
   FeedPostViewModel({
     required AuthRepository authRepository,
     required FeedRepository feedRepository,
     required UserRepository userRepository,
+    required FeedPostNotifier feedPostNotifier,
   }) : _feedRepository = feedRepository,
-       _userRepository = userRepository {
+       _userRepository = userRepository,
+       _feedPostNotifier = feedPostNotifier {
     loadPostsCommand = Command0<List<Post>>(_loadPostsInternal);
     loadMorePostsCommand = Command0<List<Post>>(_loadMorePostsInternal);
   }
-
-  List<Post> _posts = [];
-  List<Post> get posts => _posts;
 
   static const int _perPage = 5;
   bool _hasMore = true;
@@ -41,11 +43,11 @@ class FeedPostViewModel extends ChangeNotifier {
 
     switch (result) {
       case Ok<List<Post>>():
-        _posts = await _loadUsers(result.value);
+        final posts = await _loadUsers(result.value);
+        _feedPostNotifier.setPosts(posts);
         if (result.value.length < _perPage) {
           _hasMore = false;
         }
-        notifyListeners();
       case Error<List<Post>>():
         break;
     }
@@ -54,6 +56,7 @@ class FeedPostViewModel extends ChangeNotifier {
 
   Future<Result<List<Post>>> _loadMorePostsInternal() async {
     if (!_hasMore) return Result.ok([]);
+    var posts = _feedPostNotifier.value.items;
 
     final result = await _feedRepository.getPostsLimit(
       _perPage,
@@ -67,12 +70,11 @@ class FeedPostViewModel extends ChangeNotifier {
         if (newPosts.isEmpty) {
           _hasMore = false;
         } else {
-          _posts.addAll(newPosts);
+          _feedPostNotifier.insertPosts(newPosts);
           if (newPosts.length < _perPage) {
             _hasMore = false;
           }
         }
-        notifyListeners();
       case Error<List<Post>>():
         break;
     }
@@ -81,8 +83,7 @@ class FeedPostViewModel extends ChangeNotifier {
 
   /// Adds a newly created post to the top of the feed list.
   void addPost(Post post) {
-    _posts = [post, ..._posts];
-    notifyListeners();
+    _feedPostNotifier.addPost(post);
   }
 
   String paraseBody(String? initialJson) {

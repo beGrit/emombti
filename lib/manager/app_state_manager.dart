@@ -2,8 +2,10 @@ import 'package:emombti/app_state/app_config.dart';
 import 'package:emombti/app_state/app_nav_bar.dart';
 import 'package:emombti/app_state/auth.dart';
 import 'package:emombti/app_state/chat.dart'; // 补全你现有的其他全局状态
+import 'package:emombti/app_state/feed.dart';
 import 'package:emombti/app_state/quiz.dart';
 import 'package:emombti/app_state/theme.dart';
+import 'package:emombti/app_state/user_activity.dart';
 import 'package:emombti/domain/models/user/user.dart';
 import 'package:emombti/manager/repository_manager.dart';
 import 'package:emombti/manager/storage_manager.dart';
@@ -18,6 +20,9 @@ class AppStateManager extends ChangeNotifier {
   late final QuizState surveyFlowState;
   late final ChatState chatState;
   late final ThemeState themeState;
+  late final UserActivityNotifier userActivityNotifier;
+  late final FeedPostNotifier feedPostNotifier;
+  late final FeedReelNotifier feedReelNotifier;
 
   late final SyncManager syncManager;
   late final RepositoryManager repositoryManager;
@@ -51,6 +56,11 @@ class AppStateManager extends ChangeNotifier {
 
     surveyFlowState = QuizState(repository: repositoryManager.quizRepository);
     chatState = ChatState();
+
+    userActivityNotifier = UserActivityNotifier(const UserActivityState());
+    feedPostNotifier = FeedPostNotifier(const FeedPostState());
+    feedReelNotifier = FeedReelNotifier(const FeedReelState());
+
     notifyListeners();
   }
 

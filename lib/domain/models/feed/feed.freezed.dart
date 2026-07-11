@@ -11,6 +11,269 @@ part of 'feed.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$FeedEvent {
+
+ FeedEventType get eventType; FeedType get feedType; String get feedId;
+/// Create a copy of FeedEvent
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$FeedEventCopyWith<FeedEvent> get copyWith => _$FeedEventCopyWithImpl<FeedEvent>(this as FeedEvent, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeedEvent&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.feedType, feedType) || other.feedType == feedType)&&(identical(other.feedId, feedId) || other.feedId == feedId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,eventType,feedType,feedId);
+
+@override
+String toString() {
+  return 'FeedEvent(eventType: $eventType, feedType: $feedType, feedId: $feedId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $FeedEventCopyWith<$Res>  {
+  factory $FeedEventCopyWith(FeedEvent value, $Res Function(FeedEvent) _then) = _$FeedEventCopyWithImpl;
+@useResult
+$Res call({
+ FeedEventType eventType, FeedType feedType, String feedId
+});
+
+
+
+
+}
+/// @nodoc
+class _$FeedEventCopyWithImpl<$Res>
+    implements $FeedEventCopyWith<$Res> {
+  _$FeedEventCopyWithImpl(this._self, this._then);
+
+  final FeedEvent _self;
+  final $Res Function(FeedEvent) _then;
+
+/// Create a copy of FeedEvent
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? eventType = null,Object? feedType = null,Object? feedId = null,}) {
+  return _then(_self.copyWith(
+eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
+as FeedEventType,feedType: null == feedType ? _self.feedType : feedType // ignore: cast_nullable_to_non_nullable
+as FeedType,feedId: null == feedId ? _self.feedId : feedId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [FeedEvent].
+extension FeedEventPatterns on FeedEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _FeedEvent value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _FeedEvent() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _FeedEvent value)  $default,){
+final _that = this;
+switch (_that) {
+case _FeedEvent():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _FeedEvent value)?  $default,){
+final _that = this;
+switch (_that) {
+case _FeedEvent() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( FeedEventType eventType,  FeedType feedType,  String feedId)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _FeedEvent() when $default != null:
+return $default(_that.eventType,_that.feedType,_that.feedId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( FeedEventType eventType,  FeedType feedType,  String feedId)  $default,) {final _that = this;
+switch (_that) {
+case _FeedEvent():
+return $default(_that.eventType,_that.feedType,_that.feedId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( FeedEventType eventType,  FeedType feedType,  String feedId)?  $default,) {final _that = this;
+switch (_that) {
+case _FeedEvent() when $default != null:
+return $default(_that.eventType,_that.feedType,_that.feedId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _FeedEvent implements FeedEvent {
+  const _FeedEvent({required this.eventType, required this.feedType, required this.feedId});
+  
+
+@override final  FeedEventType eventType;
+@override final  FeedType feedType;
+@override final  String feedId;
+
+/// Create a copy of FeedEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FeedEventCopyWith<_FeedEvent> get copyWith => __$FeedEventCopyWithImpl<_FeedEvent>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeedEvent&&(identical(other.eventType, eventType) || other.eventType == eventType)&&(identical(other.feedType, feedType) || other.feedType == feedType)&&(identical(other.feedId, feedId) || other.feedId == feedId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,eventType,feedType,feedId);
+
+@override
+String toString() {
+  return 'FeedEvent(eventType: $eventType, feedType: $feedType, feedId: $feedId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$FeedEventCopyWith<$Res> implements $FeedEventCopyWith<$Res> {
+  factory _$FeedEventCopyWith(_FeedEvent value, $Res Function(_FeedEvent) _then) = __$FeedEventCopyWithImpl;
+@override @useResult
+$Res call({
+ FeedEventType eventType, FeedType feedType, String feedId
+});
+
+
+
+
+}
+/// @nodoc
+class __$FeedEventCopyWithImpl<$Res>
+    implements _$FeedEventCopyWith<$Res> {
+  __$FeedEventCopyWithImpl(this._self, this._then);
+
+  final _FeedEvent _self;
+  final $Res Function(_FeedEvent) _then;
+
+/// Create a copy of FeedEvent
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? eventType = null,Object? feedType = null,Object? feedId = null,}) {
+  return _then(_FeedEvent(
+eventType: null == eventType ? _self.eventType : eventType // ignore: cast_nullable_to_non_nullable
+as FeedEventType,feedType: null == feedType ? _self.feedType : feedType // ignore: cast_nullable_to_non_nullable
+as FeedType,feedId: null == feedId ? _self.feedId : feedId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
 
 /// @nodoc
 mixin _$Post {
@@ -637,290 +900,6 @@ $UserCopyWith<$Res> get author {
     return _then(_self.copyWith(author: value));
   });
 }
-}
-
-/// @nodoc
-mixin _$FeedActivity {
-
- String? get id; String? get title; String? get body; String get feedRel; RelationType get relationType; FeedType get feedType; List<String> get mediaUrls; DateTime get orderTime;
-/// Create a copy of FeedActivity
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$FeedActivityCopyWith<FeedActivity> get copyWith => _$FeedActivityCopyWithImpl<FeedActivity>(this as FeedActivity, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeedActivity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.feedRel, feedRel) || other.feedRel == feedRel)&&(identical(other.relationType, relationType) || other.relationType == relationType)&&(identical(other.feedType, feedType) || other.feedType == feedType)&&const DeepCollectionEquality().equals(other.mediaUrls, mediaUrls)&&(identical(other.orderTime, orderTime) || other.orderTime == orderTime));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,id,title,body,feedRel,relationType,feedType,const DeepCollectionEquality().hash(mediaUrls),orderTime);
-
-@override
-String toString() {
-  return 'FeedActivity(id: $id, title: $title, body: $body, feedRel: $feedRel, relationType: $relationType, feedType: $feedType, mediaUrls: $mediaUrls, orderTime: $orderTime)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $FeedActivityCopyWith<$Res>  {
-  factory $FeedActivityCopyWith(FeedActivity value, $Res Function(FeedActivity) _then) = _$FeedActivityCopyWithImpl;
-@useResult
-$Res call({
- String? id, String? title, String? body, String feedRel, RelationType relationType, FeedType feedType, List<String> mediaUrls, DateTime orderTime
-});
-
-
-
-
-}
-/// @nodoc
-class _$FeedActivityCopyWithImpl<$Res>
-    implements $FeedActivityCopyWith<$Res> {
-  _$FeedActivityCopyWithImpl(this._self, this._then);
-
-  final FeedActivity _self;
-  final $Res Function(FeedActivity) _then;
-
-/// Create a copy of FeedActivity
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = freezed,Object? body = freezed,Object? feedRel = null,Object? relationType = null,Object? feedType = null,Object? mediaUrls = null,Object? orderTime = null,}) {
-  return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String?,body: freezed == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
-as String?,feedRel: null == feedRel ? _self.feedRel : feedRel // ignore: cast_nullable_to_non_nullable
-as String,relationType: null == relationType ? _self.relationType : relationType // ignore: cast_nullable_to_non_nullable
-as RelationType,feedType: null == feedType ? _self.feedType : feedType // ignore: cast_nullable_to_non_nullable
-as FeedType,mediaUrls: null == mediaUrls ? _self.mediaUrls : mediaUrls // ignore: cast_nullable_to_non_nullable
-as List<String>,orderTime: null == orderTime ? _self.orderTime : orderTime // ignore: cast_nullable_to_non_nullable
-as DateTime,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [FeedActivity].
-extension FeedActivityPatterns on FeedActivity {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _FeedActivity value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _FeedActivity() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _FeedActivity value)  $default,){
-final _that = this;
-switch (_that) {
-case _FeedActivity():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _FeedActivity value)?  $default,){
-final _that = this;
-switch (_that) {
-case _FeedActivity() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String? title,  String? body,  String feedRel,  RelationType relationType,  FeedType feedType,  List<String> mediaUrls,  DateTime orderTime)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _FeedActivity() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.feedRel,_that.relationType,_that.feedType,_that.mediaUrls,_that.orderTime);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String? title,  String? body,  String feedRel,  RelationType relationType,  FeedType feedType,  List<String> mediaUrls,  DateTime orderTime)  $default,) {final _that = this;
-switch (_that) {
-case _FeedActivity():
-return $default(_that.id,_that.title,_that.body,_that.feedRel,_that.relationType,_that.feedType,_that.mediaUrls,_that.orderTime);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String? title,  String? body,  String feedRel,  RelationType relationType,  FeedType feedType,  List<String> mediaUrls,  DateTime orderTime)?  $default,) {final _that = this;
-switch (_that) {
-case _FeedActivity() when $default != null:
-return $default(_that.id,_that.title,_that.body,_that.feedRel,_that.relationType,_that.feedType,_that.mediaUrls,_that.orderTime);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _FeedActivity implements FeedActivity {
-  const _FeedActivity({this.id, this.title, this.body, required this.feedRel, required this.relationType, required this.feedType, final  List<String> mediaUrls = const [], required this.orderTime}): _mediaUrls = mediaUrls;
-  
-
-@override final  String? id;
-@override final  String? title;
-@override final  String? body;
-@override final  String feedRel;
-@override final  RelationType relationType;
-@override final  FeedType feedType;
- final  List<String> _mediaUrls;
-@override@JsonKey() List<String> get mediaUrls {
-  if (_mediaUrls is EqualUnmodifiableListView) return _mediaUrls;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_mediaUrls);
-}
-
-@override final  DateTime orderTime;
-
-/// Create a copy of FeedActivity
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$FeedActivityCopyWith<_FeedActivity> get copyWith => __$FeedActivityCopyWithImpl<_FeedActivity>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeedActivity&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.body, body) || other.body == body)&&(identical(other.feedRel, feedRel) || other.feedRel == feedRel)&&(identical(other.relationType, relationType) || other.relationType == relationType)&&(identical(other.feedType, feedType) || other.feedType == feedType)&&const DeepCollectionEquality().equals(other._mediaUrls, _mediaUrls)&&(identical(other.orderTime, orderTime) || other.orderTime == orderTime));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,id,title,body,feedRel,relationType,feedType,const DeepCollectionEquality().hash(_mediaUrls),orderTime);
-
-@override
-String toString() {
-  return 'FeedActivity(id: $id, title: $title, body: $body, feedRel: $feedRel, relationType: $relationType, feedType: $feedType, mediaUrls: $mediaUrls, orderTime: $orderTime)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$FeedActivityCopyWith<$Res> implements $FeedActivityCopyWith<$Res> {
-  factory _$FeedActivityCopyWith(_FeedActivity value, $Res Function(_FeedActivity) _then) = __$FeedActivityCopyWithImpl;
-@override @useResult
-$Res call({
- String? id, String? title, String? body, String feedRel, RelationType relationType, FeedType feedType, List<String> mediaUrls, DateTime orderTime
-});
-
-
-
-
-}
-/// @nodoc
-class __$FeedActivityCopyWithImpl<$Res>
-    implements _$FeedActivityCopyWith<$Res> {
-  __$FeedActivityCopyWithImpl(this._self, this._then);
-
-  final _FeedActivity _self;
-  final $Res Function(_FeedActivity) _then;
-
-/// Create a copy of FeedActivity
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = freezed,Object? body = freezed,Object? feedRel = null,Object? relationType = null,Object? feedType = null,Object? mediaUrls = null,Object? orderTime = null,}) {
-  return _then(_FeedActivity(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String?,title: freezed == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
-as String?,body: freezed == body ? _self.body : body // ignore: cast_nullable_to_non_nullable
-as String?,feedRel: null == feedRel ? _self.feedRel : feedRel // ignore: cast_nullable_to_non_nullable
-as String,relationType: null == relationType ? _self.relationType : relationType // ignore: cast_nullable_to_non_nullable
-as RelationType,feedType: null == feedType ? _self.feedType : feedType // ignore: cast_nullable_to_non_nullable
-as FeedType,mediaUrls: null == mediaUrls ? _self._mediaUrls : mediaUrls // ignore: cast_nullable_to_non_nullable
-as List<String>,orderTime: null == orderTime ? _self.orderTime : orderTime // ignore: cast_nullable_to_non_nullable
-as DateTime,
-  ));
-}
-
-
 }
 
 // dart format on

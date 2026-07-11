@@ -235,25 +235,24 @@ class FirestoreService {
     }
   }
 
-  /// Delete a user activity at /user/{userId}/activities/{activityId}
-  Future<void> deleteActivity(String userId, String activityId) async {
-    await _userActivities(userId).doc(activityId).delete();
-  }
-
   /// Delete a user activity by relatedId at /user/{userId}/activities/{activityId}
-  Future<void> deleteActivityByRelatedId(
-    String userId,
-    String type,
-    String relatedId,
-  ) async {
-    final query = await _userActivities(userId)
+  /// Delete a feed post and its associated activity from user collections
+  Future<void> deleteFeedAndActivity({
+    required String feedId,
+    required String userId,
+    required String type,
+  }) async {
+    final batch = _firestore.batch();
+    batch.delete(_feed.doc(feedId));
+    final querySnapshot = await _userActivities(userId)
         .where('type', isEqualTo: type)
-        .where('relatedId', isEqualTo: relatedId)
+        .where('relatedId', isEqualTo: feedId)
         .get();
 
-    for (final doc in query.docs) {
-      await doc.reference.delete();
+    for (final doc in querySnapshot.docs) {
+      batch.delete(doc.reference);
     }
+    await batch.commit();
   }
 
   /// Save or update user profile data at /users/{uid}

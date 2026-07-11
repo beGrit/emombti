@@ -1,3 +1,4 @@
+import 'package:emombti/app_state/feed.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
@@ -81,6 +82,7 @@ class _ExploreScreenState extends State<ExploreScreen>
             authRepository: context.read<AuthRepository>(),
             feedRepository: context.read<FeedRepository>(),
             userRepository: context.read<UserRepository>(),
+            feedPostNotifier: context.read<FeedPostNotifier>(),
           )..loadPostsCommand.execute(),
         ),
         ChangeNotifierProvider(

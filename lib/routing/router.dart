@@ -1,8 +1,12 @@
 import 'package:emombti/app_state/auth.dart';
 import 'package:emombti/app_state/chat.dart';
+import 'package:emombti/app_state/user_activity.dart';
+import 'package:emombti/data/repositories/activity/activity_repository.dart';
+import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/chat/chat_repository.dart';
 import 'package:emombti/data/repositories/feed/feed_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
+import 'package:emombti/domain/use_cases/user/user_avatar_update_use_case.dart';
 import 'package:emombti/routing/navigation_config.dart';
 import 'package:emombti/ui/chat/view_models/chat_ai_viewmodel.dart';
 import 'package:emombti/ui/chat/view_models/chat_cloud_viewmodel.dart';
@@ -85,11 +89,12 @@ GoRouter router(AuthState authState) => GoRouter(
       builder: (context, state) => MeScreen(
         showBackButton: true,
         viewModel: MeScreenViewModel(
-          context.read(),
-          context.read(),
-          context.read(),
-          context.read(),
-          context.read(),
+          context.read<ActivityRepository>(),
+          context.read<AuthRepository>(),
+          context.read<UserRepository>(),
+          context.read<AuthState>(),
+          context.read<UserAvatarUpdateUseCase>(),
+          context.read<UserActivityNotifier>(),
         ),
       ),
     ),
@@ -100,11 +105,12 @@ GoRouter router(AuthState authState) => GoRouter(
       builder: (context, state) {
         return MeBackgroundPicker(
           viewModel: MeScreenViewModel(
-            context.read(),
-            context.read(),
-            context.read(),
-            context.read(),
-            context.read(),
+            context.read<ActivityRepository>(),
+            context.read<AuthRepository>(),
+            context.read<UserRepository>(),
+            context.read<AuthState>(),
+            context.read<UserAvatarUpdateUseCase>(),
+            context.read<UserActivityNotifier>(),
           ),
         );
       },
@@ -217,8 +223,9 @@ GoRouter router(AuthState authState) => GoRouter(
               feedPostId: postId,
               feedRepository: context.read(),
               userRepository: context.read(),
-              activityRepository: context.read(),
               authState: context.read(),
+              userActivityNotifier: context.read(),
+              feedPostNotifier: context.read(),
             );
             viewModel.loadPostCommand.execute();
             viewModel.loadSocialCommand.execute();
@@ -326,11 +333,12 @@ GoRouter router(AuthState authState) => GoRouter(
               path: Routes.me,
               builder: (context, state) => MeScreen(
                 viewModel: MeScreenViewModel(
-                  context.read(),
-                  context.read(),
-                  context.read(),
-                  context.read(),
-                  context.read(),
+                  context.read<ActivityRepository>(),
+                  context.read<AuthRepository>(),
+                  context.read<UserRepository>(),
+                  context.read<AuthState>(),
+                  context.read<UserAvatarUpdateUseCase>(),
+                  context.read<UserActivityNotifier>(),
                 ),
               ),
             ),

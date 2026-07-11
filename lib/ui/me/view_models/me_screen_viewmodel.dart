@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:emombti/app_state/auth.dart';
+import 'package:emombti/app_state/user_activity.dart';
 import 'package:emombti/data/repositories/activity/activity_repository.dart';
 import 'package:emombti/data/repositories/auth/auth_repository.dart';
 import 'package:emombti/data/repositories/user/user_repository.dart';
@@ -11,12 +14,20 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MeScreenViewModel extends ChangeNotifier {
+  final ActivityRepository _activityRepository;
+  final AuthRepository _authRepository;
+  final UserRepository _userRepository;
+  final AuthState _authState;
+  final UserAvatarUpdateUseCase _userAvatarUpdateUseCase;
+  final UserActivityNotifier _userActivityNotifier;
+
   MeScreenViewModel(
     this._activityRepository,
     this._authRepository,
     this._userRepository,
     this._authState,
     this._userAvatarUpdateUseCase,
+    this._userActivityNotifier,
   ) {
     _authState.addListener(_onAuthStateChanged);
     loadActivity = Command0<List<Activity>>(_loadActivityInternal);
@@ -27,34 +38,23 @@ class MeScreenViewModel extends ChangeNotifier {
     deleteActivityCommand = Command1<void, String>(_deleteActivity);
   }
 
-  final ActivityRepository _activityRepository;
-  final AuthRepository _authRepository;
-  final UserRepository _userRepository;
-  final AuthState _authState;
-  final UserAvatarUpdateUseCase _userAvatarUpdateUseCase;
   late final Command0<List<Activity>> loadActivity;
   late final Command0<User> pickAndUploadAvatarCommand;
   late final Command0<User> pickAndUploadBackgoundImgCommand;
   late final Command1<void, String> deleteActivityCommand;
-
-  List<Activity> _activities = [];
-  List<Activity> get activities => _activities;
 
   User? get user => _authState.user;
 
   Future<Result<List<Activity>>> _loadActivityInternal() async {
     final userId = user?.id;
     if (userId == null || userId.isEmpty) {
-      _activities = [];
-      notifyListeners();
-      return Result.ok(_activities);
+      _userActivityNotifier.setActivities([]);
+      return Result.ok([]);
     }
-
     final result = await _activityRepository.getActivities(userId);
     switch (result) {
       case Ok<List<Activity>>():
-        _activities = result.value;
-        notifyListeners();
+        _userActivityNotifier.setActivities(result.value);
       case Error<List<Activity>>():
         break;
     }
@@ -104,11 +104,15 @@ class MeScreenViewModel extends ChangeNotifier {
     if (userId == null) {
       return Result.error(Exception('User not authenticated'));
     }
-
-    final result = await _activityRepository.deleteActivity(userId, activityId);
+    var activity = _userActivityNotifier.value.items
+        .where((e) => e.id == activityId)
+        .firstOrNull;
+    if (activity == null) {
+      return Result.error(Exception('Activity not exsists.'));
+    }
+    final result = await _activityRepository.deleteActivity(userId, activity);
     if (result is Ok) {
-      _activities.removeWhere((a) => a.id == activityId);
-      notifyListeners();
+      _userActivityNotifier.removeActivity(activityId);
     }
     return result;
   }
@@ -121,8 +125,8 @@ class MeScreenViewModel extends ChangeNotifier {
   }
 
   void _onAuthStateChanged() {
-    if (user == null && _activities.isNotEmpty) {
-      _activities = [];
+    if (user == null && _userActivityNotifier.value.items.isNotEmpty) {
+      _userActivityNotifier.setActivities([]);
     }
     notifyListeners();
   }
